@@ -1,0 +1,1262 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PROFREELANCE OS CONTROL PANEL</title>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root{
+      --bg0:#07090f;
+      --bg1:#0b1020;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.04);
+      --stroke:rgba(255,255,255,.12);
+      --text:#e9eef8;
+      --muted:rgba(233,238,248,.68);
+      --muted2:rgba(233,238,248,.45);
+      --teal:#14b8a6;
+      --teal2:rgba(20,184,166,.22);
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --radius:18px;
+      --radius2:26px;
+      --blur: 18px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 15% -10%, rgba(20,184,166,.18), transparent 55%),
+        radial-gradient(900px 500px at 85% 0%, rgba(90,120,255,.16), transparent 55%),
+        radial-gradient(1100px 650px at 60% 120%, rgba(20,184,166,.12), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
+
+    /* Subtle grid */
+    .grid-overlay{
+      position:fixed; inset:0;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(circle at 30% 10%, rgba(0,0,0,1), rgba(0,0,0,.35) 45%, rgba(0,0,0,.05) 70%, transparent 85%);
+      pointer-events:none;
+      opacity:.35;
+    }
+
+    /* Neon accent streak */
+    .streak{
+      position:fixed; inset:-40vh -40vw;
+      background:
+        conic-gradient(from 180deg at 50% 50%,
+          transparent 0 20%,
+          rgba(20,184,166,.18) 22% 26%,
+          transparent 28% 55%,
+          rgba(20,184,166,.10) 57% 60%,
+          transparent 62% 100%);
+      filter: blur(45px);
+      opacity:.55;
+      animation: drift 18s ease-in-out infinite;
+      pointer-events:none;
+    }
+    @keyframes drift{
+      0%{transform:translate3d(-2%, -1%, 0) rotate(0deg)}
+      50%{transform:translate3d(2%, 1%, 0) rotate(10deg)}
+      100%{transform:translate3d(-2%, -1%, 0) rotate(0deg)}
+    }
+
+    .wrap{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 18px 40px;
+    }
+
+    /* Top bar */
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding: 18px 18px;
+      border:1px solid var(--stroke);
+      border-radius: var(--radius2);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      backdrop-filter: blur(var(--blur));
+      -webkit-backdrop-filter: blur(var(--blur));
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 14px;
+      z-index: 10;
+    }
+
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      min-width: 240px;
+    }
+    .logo{
+      width:40px; height:40px;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,.20), transparent 45%),
+        linear-gradient(135deg, rgba(20,184,166,.95), rgba(20,184,166,.20));
+      box-shadow: 0 10px 30px rgba(20,184,166,.20);
+      border: 1px solid rgba(255,255,255,.16);
+      position:relative;
+      overflow:hidden;
+    }
+    .logo:after{
+      content:"";
+      position:absolute; inset:-30%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+      transform: rotate(25deg);
+      animation: sheen 3.8s ease-in-out infinite;
+    }
+    @keyframes sheen{
+      0%{transform:translateX(-40%) rotate(25deg)}
+      60%{transform:translateX(35%) rotate(25deg)}
+      100%{transform:translateX(35%) rotate(25deg)}
+    }
+
+    .brand h1{
+      font-size: 14px;
+      letter-spacing: .16em;
+      font-weight: 700;
+      margin:0;
+      color: rgba(233,238,248,.92);
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+    .brand .sub{
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: .04em;
+    }
+
+    .right{
+      display:flex; align-items:center; gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .pill{
+      display:flex; align-items:center; gap:8px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      backdrop-filter: blur(var(--blur));
+      -webkit-backdrop-filter: blur(var(--blur));
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing:.02em;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: rgba(255,255,255,.25);
+      box-shadow: 0 0 0 6px rgba(255,255,255,.06);
+    }
+    .dot.ok{ background: var(--teal); box-shadow: 0 0 0 6px rgba(20,184,166,.14), 0 0 24px rgba(20,184,166,.24); }
+    .dot.warn{ background: #fbbf24; box-shadow: 0 0 0 6px rgba(251,191,36,.12), 0 0 24px rgba(251,191,36,.22); }
+    .dot.down{ background: #fb7185; box-shadow: 0 0 0 6px rgba(251,113,133,.14), 0 0 24px rgba(251,113,133,.22); }
+
+    .btn{
+      border:1px solid rgba(20,184,166,.35);
+      background: linear-gradient(180deg, rgba(20,184,166,.18), rgba(20,184,166,.06));
+      color: rgba(233,238,248,.88);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      letter-spacing:.04em;
+      cursor:pointer;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(20,184,166,.55); }
+    .btn:active{ transform: translateY(0px) scale(.99); }
+
+    /* Layout grid */
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+      .brand{ min-width: unset; }
+      .topbar{ position: static; }
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      border-radius: var(--radius2);
+      backdrop-filter: blur(var(--blur));
+      -webkit-backdrop-filter: blur(var(--blur));
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .card:before{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(700px 300px at 20% 0%, rgba(20,184,166,.14), transparent 65%);
+      pointer-events:none;
+      opacity:.8;
+    }
+
+    .card-header{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+      padding: 18px 18px 8px;
+      position:relative;
+    }
+    .title{
+      font-size: 13px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin:0;
+      color: rgba(233,238,248,.78);
+    }
+    .meta{
+      font-size: 12px;
+      color: var(--muted2);
+      margin-top: 6px;
+      letter-spacing:.02em;
+    }
+
+    .card-body{
+      padding: 12px 18px 18px;
+      position:relative;
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 560px){
+      .stats{ grid-template-columns: 1fr; }
+    }
+
+    .stat{
+      border:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border-radius: var(--radius);
+      padding: 14px 14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .stat:after{
+      content:"";
+      position:absolute; inset:-40%;
+      background: radial-gradient(circle at 30% 30%, rgba(20,184,166,.18), transparent 55%);
+      opacity:.55;
+      transform: rotate(12deg);
+      pointer-events:none;
+    }
+    .stat-label{
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing:.10em;
+      text-transform: uppercase;
+    }
+    .stat-value{
+      margin-top: 10px;
+      font-size: 28px;
+      letter-spacing: .02em;
+      font-weight: 750;
+      color: rgba(233,238,248,.95);
+    }
+    .stat-foot{
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--muted2);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(20,184,166,.35);
+      background: rgba(20,184,166,.08);
+      color: rgba(233,238,248,.85);
+      letter-spacing:.06em;
+      text-transform: uppercase;
+      font-size: 11px;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .badge .mini{
+      width: 8px; height:8px; border-radius:999px;
+      background: var(--teal);
+      box-shadow: 0 0 18px rgba(20,184,166,.28);
+    }
+
+    /* Chart area */
+    .chart-wrap{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      border-radius: var(--radius);
+      padding: 12px;
+      height: 310px;
+    }
+    canvas{ width:100% !important; height:100% !important; }
+
+    /* Right column widgets */
+    .stack{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+
+    .feed{
+      display:flex; flex-direction:column; gap:10px;
+      max-height: 320px;
+      overflow:auto;
+      padding-right: 6px;
+    }
+    .feed::-webkit-scrollbar{ width: 10px; }
+    .feed::-webkit-scrollbar-thumb{
+      background: rgba(255,255,255,.10);
+      border: 3px solid rgba(0,0,0,0);
+      background-clip: padding-box;
+      border-radius:999px;
+    }
+
+    .feed-item{
+      border:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border-radius: 16px;
+      padding: 12px 12px;
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+    }
+    .feed-icon{
+      width: 34px; height:34px;
+      border-radius: 12px;
+      border: 1px solid rgba(20,184,166,.35);
+      background: rgba(20,184,166,.10);
+      box-shadow: 0 10px 30px rgba(20,184,166,.10);
+      display:grid;
+      place-items:center;
+      flex:0 0 auto;
+    }
+    .feed-icon svg{ width: 18px; height:18px; fill: rgba(233,238,248,.88); opacity:.9;}
+    .feed-text{ flex: 1 1 auto; }
+    .feed-title{
+      font-size: 13px;
+      color: rgba(233,238,248,.90);
+      margin:0;
+      line-height:1.25;
+    }
+    .feed-meta{
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--muted2);
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    }
+    .tag{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      padding: 4px 8px;
+      border-radius: 999px;
+      letter-spacing:.06em;
+      text-transform: uppercase;
+      font-size: 10px;
+      color: var(--muted);
+      user-select:none;
+      white-space:nowrap;
+    }
+
+    /* Small widgets */
+    .mini-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 980px){
+      .mini-grid{ grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 560px){
+      .mini-grid{ grid-template-columns: 1fr; }
+    }
+
+    .mini{
+      border:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border-radius: var(--radius);
+      padding: 14px;
+      position:relative;
+      overflow:hidden;
+      min-height: 92px;
+    }
+    .mini .k{
+      font-size: 12px;
+      letter-spacing:.10em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .mini .v{
+      margin-top: 10px;
+      font-size: 18px;
+      font-weight: 700;
+      color: rgba(233,238,248,.92);
+      letter-spacing:.02em;
+    }
+    .pulse{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+    .pulse .ring{
+      width: 10px; height: 10px; border-radius:999px;
+      background: var(--teal);
+      position:relative;
+      box-shadow: 0 0 18px rgba(20,184,166,.28);
+    }
+    .pulse .ring:after{
+      content:"";
+      position:absolute; inset:-10px;
+      border-radius:999px;
+      border:1px solid rgba(20,184,166,.40);
+      opacity:.65;
+      animation: ping 1.6s ease-out infinite;
+    }
+    @keyframes ping{
+      0%{transform:scale(.55); opacity:.75}
+      100%{transform:scale(1.55); opacity:0}
+    }
+
+    .footer-note{
+      margin-top: 18px;
+      color: var(--muted2);
+      font-size: 12px;
+      letter-spacing:.02em;
+      text-align:center;
+      opacity:.9;
+    }
+    .footer-note b{ color: rgba(233,238,248,.88); font-weight:700; }
+    a{ color: rgba(20,184,166,.95); text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    /* Toast */
+    .toast{
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      max-width: 360px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(10,14,24,.55);
+      backdrop-filter: blur(var(--blur));
+      -webkit-backdrop-filter: blur(var(--blur));
+      box-shadow: var(--shadow);
+      color: rgba(233,238,248,.88);
+      font-size: 12px;
+      letter-spacing:.02em;
+      transform: translateY(14px);
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .25s ease, transform .25s ease;
+      z-index: 50;
+    }
+    .toast.show{
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .toast .t-title{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      font-weight:700;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color: rgba(233,238,248,.85);
+      margin-bottom: 6px;
+    }
+    .toast code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      padding: 2px 6px;
+      border-radius: 8px;
+      color: rgba(233,238,248,.88);
+      white-space:nowrap;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="streak"></div>
+  <div class="grid-overlay"></div>
+
+  <div class="wrap">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>PROFREELANCE OS CONTROL PANEL</h1>
+          <div class="sub" id="subtitle">Live ops view: revenue, pipeline, activity, system status</div>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="pill" title="Local time (Africa/Johannesburg)">
+          <span class="dot ok" id="clockDot" aria-hidden="true"></span>
+          <span id="clock">--:--:--</span>
+        </div>
+        <div class="pill" title="Sheet connection status">
+          <span class="dot" id="sheetDot" aria-hidden="true"></span>
+          <span id="sheetStatus">Sheet: not connected</span>
+        </div>
+        <button class="btn" id="refreshBtn" type="button">Refresh data</button>
+      </div>
+    </header>
+
+    <main class="grid">
+      <!-- LEFT: Metrics + Chart -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <p class="title">Revenue & Pipeline</p>
+            <div class="meta" id="lastUpdated">Last updated: --</div>
+          </div>
+          <div class="badge" title="Auto-refresh interval">
+            <span class="mini"></span>
+            <span id="refreshLabel">Auto: 30s</span>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="stats">
+            <div class="stat">
+              <div class="stat-label">Revenue</div>
+              <div class="stat-value" id="revenueValue">R0</div>
+              <div class="stat-foot">
+                <span id="revenueDelta">Δ 0%</span>
+                <span class="tag" id="revenueTag">Month</span>
+              </div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Pipeline value</div>
+              <div class="stat-value" id="pipelineValue">R0</div>
+              <div class="stat-foot">
+                <span id="pipelineDelta">Δ 0%</span>
+                <span class="tag" id="pipelineTag">Active</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-wrap">
+            <canvas id="lineChart" aria-label="Line graph"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: Feed + Mini widgets -->
+      <aside class="stack">
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <p class="title">Activity feed</p>
+              <div class="meta">Operational events and wins, streamed from sheet</div>
+            </div>
+            <span class="tag" id="feedTag">Live</span>
+          </div>
+
+          <div class="card-body">
+            <div class="feed" id="feed"></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <p class="title">System</p>
+              <div class="meta">Health indicator + environment details</div>
+            </div>
+            <span class="tag" id="envTag">PROD</span>
+          </div>
+
+          <div class="card-body">
+            <div class="mini-grid">
+              <div class="mini">
+                <div class="k">
+                  <span>System status</span>
+                  <span class="pulse" title="Heartbeat">
+                    <span class="ring" aria-hidden="true"></span>
+                  </span>
+                </div>
+                <div class="v" id="systemStatusText">Checking…</div>
+                <div class="meta" id="systemStatusMeta" style="margin-top:8px;">--</div>
+              </div>
+
+              <div class="mini">
+                <div class="k">
+                  <span>Uptime</span>
+                  <span class="tag" id="uptimeTag">Session</span>
+                </div>
+                <div class="v" id="uptime">00:00:00</div>
+                <div class="meta" style="margin-top:8px;">Since page load</div>
+              </div>
+
+              <div class="mini">
+                <div class="k">
+                  <span>Requests</span>
+                  <span class="tag" id="reqTag">Sheets</span>
+                </div>
+                <div class="v"><span id="reqCount">0</span></div>
+                <div class="meta" style="margin-top:8px;">Successful fetches</div>
+              </div>
+
+              <div class="mini">
+                <div class="k">
+                  <span>Latency</span>
+                  <span class="tag" id="latTag">Avg</span>
+                </div>
+                <div class="v"><span id="latency">--</span></div>
+                <div class="meta" style="margin-top:8px;">Fetch round-trip</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <div class="footer-note">
+      <b>Tip:</b> Publish your Google Sheet to the web (or use a Sheets API key) so this dashboard can pull live data.
+      Teal accent: <code style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);padding:2px 6px;border-radius:8px;color:rgba(233,238,248,.88);">#14b8a6</code>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">
+    <div class="t-title">
+      <span id="toastTitle">Notice</span>
+      <span class="tag" id="toastTag">INFO</span>
+    </div>
+    <div id="toastBody"></div>
+  </div>
+
+  <script>
+    /*************************************************************
+     * PROFREELANCE OS CONTROL PANEL
+     * - Dark mode + glassmorphism
+     * - Animated counters
+     * - Real-time charts (Chart.js)
+     * - Responsive layout
+     * - Live data from Google Sheets (via GViz JSON or Sheets API)
+     *
+     * IMPORTANT:
+     * 1) Replace SHEET_ID below (you currently have a placeholder)
+     * 2) Ensure your sheet is accessible:
+     *    Option A (no API key): Publish to web + use GViz endpoint (recommended for quick setup)
+     *    Option B (API key): Use Google Sheets API v4
+     *************************************************************/
+
+    const CONFIG = {
+      SHEET_ID: "PASTE YOUR SHEET ID HERE",   // <-- replace this
+      // If you know your sheet tab GID (from URL: ...#gid=12345), set it here.
+      // GViz works well when the sheet is published to the web.
+      SHEET_GID: "0",
+      // Optional: If you want to use Sheets API v4 instead of GViz:
+      // API_KEY: "PASTE_YOUR_GOOGLE_API_KEY",
+      // API_RANGE_METRICS: "Metrics!A1:Z",   // example
+      // API_RANGE_FEED: "Activity!A1:Z",     // example
+      REFRESH_MS: 30000
+    };
+
+    // Expected sheet layout (recommended):
+    // Tab: "Metrics"
+    // Columns:
+    //   A: Date (or label)
+    //   B: Revenue
+    //   C: Pipeline
+    //   D: SystemStatus (OK | WARN | DOWN)
+    //
+    // Tab: "Activity"
+    // Columns:
+    //   A: Timestamp
+    //   B: Title
+    //   C: Type (e.g. "deal", "invoice", "ops", "note")
+    //   D: Detail (optional)
+    //
+    // If your sheet doesn't match, the dashboard will still render using fallbacks.
+
+    // ---------- Utilities ----------
+    const $ = (sel) => document.querySelector(sel);
+    const fmtZAR = (n) => {
+      const v = Number(n || 0);
+      // Locale "en-ZA" for South African formatting
+      return v.toLocaleString("en-ZA", { style: "currency", currency: "ZAR", maximumFractionDigits: 0 });
+    };
+    const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+    const pad2 = (n) => String(n).padStart(2, "0");
+
+    function showToast(title, body, tag="INFO"){
+      const t = $("#toast");
+      $("#toastTitle").textContent = title;
+      $("#toastBody").innerHTML = body;
+      $("#toastTag").textContent = tag;
+      t.classList.add("show");
+      clearTimeout(showToast._tm);
+      showToast._tm = setTimeout(() => t.classList.remove("show"), 5200);
+    }
+
+    // ---------- Clock ----------
+    function startClock(){
+      const el = $("#clock");
+      const dot = $("#clockDot");
+      setInterval(() => {
+        const now = new Date();
+        el.textContent = now.toLocaleTimeString("en-ZA", { hour12:false });
+        dot.classList.add("ok");
+      }, 250);
+    }
+
+    // ---------- Uptime ----------
+    const startedAt = performance.now();
+    function startUptime(){
+      const el = $("#uptime");
+      setInterval(() => {
+        const s = Math.floor((performance.now() - startedAt) / 1000);
+        const hh = Math.floor(s / 3600);
+        const mm = Math.floor((s % 3600) / 60);
+        const ss = s % 60;
+        el.textContent = `${pad2(hh)}:${pad2(mm)}:${pad2(ss)}`;
+      }, 250);
+    }
+
+    // ---------- Animated counter ----------
+    function animateNumber(el, to, opts={}){
+      const {
+        duration=900,
+        prefix="",
+        suffix="",
+        format=(x)=>String(x)
+      } = opts;
+
+      const fromRaw = el.dataset.value ? Number(el.dataset.value) : 0;
+      const from = Number.isFinite(fromRaw) ? fromRaw : 0;
+      const target = Number.isFinite(Number(to)) ? Number(to) : 0;
+
+      el.dataset.value = target;
+
+      const t0 = performance.now();
+      const ease = (t) => 1 - Math.pow(1 - t, 3); // cubic out
+
+      function tick(now){
+        const p = clamp((now - t0) / duration, 0, 1);
+        const v = from + (target - from) * ease(p);
+        el.textContent = `${prefix}${format(v)}${suffix}`;
+        if(p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    // ---------- Chart.js ----------
+    let lineChart;
+
+    function makeChart(ctx, labels, revenueSeries, pipelineSeries){
+      const teal = getComputedStyle(document.documentElement).getPropertyValue("--teal").trim() || "#14b8a6";
+
+      const data = {
+        labels,
+        datasets: [
+          {
+            label: "Revenue",
+            data: revenueSeries,
+            borderColor: teal,
+            backgroundColor: "rgba(20,184,166,.10)",
+            tension: 0.35,
+            borderWidth: 2,
+            pointRadius: 0,
+            fill: true
+          },
+          {
+            label: "Pipeline",
+            data: pipelineSeries,
+            borderColor: "rgba(233,238,248,.55)",
+            backgroundColor: "rgba(233,238,248,.04)",
+            tension: 0.35,
+            borderWidth: 2,
+            pointRadius: 0,
+            fill: false
+          }
+        ]
+      };
+
+      const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: {
+            labels: {
+              color: "rgba(233,238,248,.75)",
+              boxWidth: 10,
+              boxHeight: 10,
+              usePointStyle: true,
+              pointStyle: "circle"
+            }
+          },
+          tooltip: {
+            backgroundColor: "rgba(8,12,22,.85)",
+            borderColor: "rgba(255,255,255,.12)",
+            borderWidth: 1,
+            titleColor: "rgba(233,238,248,.92)",
+            bodyColor: "rgba(233,238,248,.82)",
+            padding: 12,
+            callbacks: {
+              label: (ctx) => {
+                const label = ctx.dataset.label || "Value";
+                return ` ${label}: ${fmtZAR(ctx.parsed.y)}`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: "rgba(233,238,248,.55)", maxRotation: 0, autoSkip: true },
+            grid: { color: "rgba(255,255,255,.06)" }
+          },
+          y: {
+            ticks: {
+              color: "rgba(233,238,248,.55)",
+              callback: (v) => {
+                // compact-ish labels
+                if (Math.abs(v) >= 1e6) return `R${(v/1e6).toFixed(1)}M`;
+                if (Math.abs(v) >= 1e3) return `R${(v/1e3).toFixed(0)}k`;
+                return `R${v}`;
+              }
+            },
+            grid: { color: "rgba(255,255,255,.06)" }
+          }
+        }
+      };
+
+      if(lineChart){
+        lineChart.data = data;
+        lineChart.options = options;
+        lineChart.update();
+        return;
+      }
+
+      lineChart = new Chart(ctx, { type:"line", data, options });
+    }
+
+    // ---------- Activity feed ----------
+    const ICONS = {
+      deal: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v2H7V7zm0 4h7v2H7v-2zm-3 9V4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v16l-4-3H6a2 2 0 0 1-2-2z"/></svg>`,
+      invoice: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h12l2 2v18l-2-1-2 1-2-1-2 1-2-1-2 1-2-1-2 1V4l2-2zm2 6h8v2H8V8zm0 4h8v2H8v-2z"/></svg>`,
+      ops: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm9 4-2.1.7a7.9 7.9 0 0 1-.6 1.5l1.2 1.9-1.8 1.8-1.9-1.2a7.9 7.9 0 0 1-1.5.6L12 21l-1-2.1a7.9 7.9 0 0 1-1.5-.6l-1.9 1.2-1.8-1.8 1.2-1.9a7.9 7.9 0 0 1-.6-1.5L3 12l2.1-1a7.9 7.9 0 0 1 .6-1.5L4.5 7.6 6.3 5.8l1.9 1.2c.5-.2 1-.4 1.5-.6L12 3l1 2.1c.5.1 1 .3 1.5.6l1.9-1.2 1.8 1.8-1.2 1.9c.2.5.4 1 .6 1.5L21 12z"/></svg>`,
+      note: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4V4zm3 4h10v2H7V8zm0 4h10v2H7v-2z"/></svg>`
+    };
+
+    function renderFeed(items){
+      const el = $("#feed");
+      el.innerHTML = "";
+
+      const safe = Array.isArray(items) ? items : [];
+      if(!safe.length){
+        el.innerHTML = `<div class="meta">No activity yet. (Or your sheet tab/range isn’t wired.)</div>`;
+        return;
+      }
+
+      for(const it of safe.slice(0, 18)){
+        const type = (it.type || "note").toLowerCase();
+        const icon = ICONS[type] || ICONS.note;
+        const when = it.when ? new Date(it.when) : null;
+        const whenText = when && !isNaN(when) ? when.toLocaleString("en-ZA", { hour12:false }) : (it.whenText || "—");
+        const title = it.title || "Update";
+        const detail = it.detail || "";
+
+        const node = document.createElement("div");
+        node.className = "feed-item";
+        node.innerHTML = `
+          <div class="feed-icon">${icon}</div>
+          <div class="feed-text">
+            <p class="feed-title">${escapeHtml(title)}</p>
+            <div class="feed-meta">
+              <span>${escapeHtml(whenText)}</span>
+              <span class="tag">${escapeHtml(type)}</span>
+              ${detail ? `<span class="tag">${escapeHtml(detail)}</span>` : ""}
+            </div>
+          </div>
+        `;
+        el.appendChild(node);
+      }
+    }
+
+    function escapeHtml(str){
+      return String(str ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    // ---------- System status ----------
+    function setSystemStatus(status, note){
+      const s = (status || "").toUpperCase();
+      const dot = $("#sheetDot");
+      const text = $("#systemStatusText");
+      const meta = $("#systemStatusMeta");
+
+      let cls = "";
+      let label = "OK";
+      if(s.includes("WARN")){ cls="warn"; label="DEGRADED"; }
+      else if(s.includes("DOWN") || s.includes("FAIL") || s.includes("ERROR")){ cls="down"; label="DOWN"; }
+      else { cls="ok"; label="HEALTHY"; }
+
+      // Sheet dot reflects connection; system uses text + meta
+      text.textContent = label;
+      meta.textContent = note || (label === "HEALTHY" ? "All services nominal" : "Attention required");
+
+      // also tint the clock dot slightly for drama
+      const clockDot = $("#clockDot");
+      clockDot.className = `dot ${cls}`;
+
+      return cls;
+    }
+
+    // ---------- Google Sheets Fetch ----------
+    // Option A: Google Visualization API (no API key) - requires "Publish to the web"
+    // Endpoint:
+    //  https://docs.google.com/spreadsheets/d/{SHEET_ID}/gviz/tq?gid={GID}&tqx=out:json&tq=...
+    //
+    // We’ll pull:
+    //  1) Metrics: first ~30 rows and parse Revenue/Pipeline/Status
+    //  2) Activity: from another gid or same with query (simplified: assumes two tabs = two GIDs; if not, fallback)
+    //
+    // Note: Without knowing your exact tabs, we implement a “best effort” parser and fall back to mock data.
+
+    let requestSuccessCount = 0;
+    let latencySamples = [];
+
+    async function fetchGVizJSON({gid="0", tq="select *"}){
+      const url =
+        `https://docs.google.com/spreadsheets/d/${encodeURIComponent(CONFIG.SHEET_ID)}/gviz/tq` +
+        `?gid=${encodeURIComponent(gid)}` +
+        `&tqx=out:json` +
+        `&tq=${encodeURIComponent(tq)}`;
+
+      const t0 = performance.now();
+      const res = await fetch(url, { cache: "no-store" });
+      const txt = await res.text();
+      const t1 = performance.now();
+
+      // GViz returns: "google.visualization.Query.setResponse({...});"
+      const jsonStr = txt.substring(txt.indexOf("{"), txt.lastIndexOf("}") + 1);
+      const data = JSON.parse(jsonStr);
+
+      const dt = t1 - t0;
+      latencySamples.push(dt);
+      if(latencySamples.length > 12) latencySamples.shift();
+      updateLatency();
+
+      return data;
+    }
+
+    function updateLatency(){
+      const el = $("#latency");
+      if(!latencySamples.length){ el.textContent = "--"; return; }
+      const avg = latencySamples.reduce((a,b)=>a+b,0) / latencySamples.length;
+      el.textContent = `${Math.round(avg)} ms`;
+    }
+
+    function gvizToRows(gviz){
+      const table = gviz?.table;
+      const cols = (table?.cols || []).map(c => (c.label || "").trim());
+      const rows = (table?.rows || []).map(r => (r.c || []).map(cell => cell ? (cell.v ?? "") : ""));
+      return { cols, rows };
+    }
+
+    function inferMetricsFromRows(cols, rows){
+      // Try to find columns by name; otherwise guess B/C for revenue/pipeline, D for status.
+      const idx = (nameCandidates) => {
+        const lower = cols.map(c => String(c).toLowerCase());
+        for(const cand of nameCandidates){
+          const i = lower.indexOf(cand);
+          if(i !== -1) return i;
+        }
+        return -1;
+      };
+
+      const dateI = idx(["date","day","label","month"]) !== -1 ? idx(["date","day","label","month"]) : 0;
+      let revI = idx(["revenue","rev","sales"]);
+      let pipeI = idx(["pipeline","pipeline value","pipe","opportunity"]);
+      let statusI = idx(["status","systemstatus","system status","health"]);
+
+      if(revI === -1) revI = 1;
+      if(pipeI === -1) pipeI = 2;
+      if(statusI === -1) statusI = 3;
+
+      const labels = [];
+      const revenue = [];
+      const pipeline = [];
+      let status = "OK";
+
+      for(const r of rows.slice(0, 60)){
+        const label = r[dateI];
+        const rev = Number(r[revI] || 0);
+        const pip = Number(r[pipeI] || 0);
+        if(label !== undefined && label !== null && String(label).trim() !== ""){
+          labels.push(String(label));
+          revenue.push(isFinite(rev) ? rev : 0);
+          pipeline.push(isFinite(pip) ? pip : 0);
+        }
+        if(r[statusI]) status = String(r[statusI]);
+      }
+
+      // If all zero / empty, return null to force fallback
+      const nonZero = revenue.some(v => v !== 0) || pipeline.some(v => v !== 0);
+      if(!labels.length || !nonZero) return null;
+
+      return { labels, revenue, pipeline, status };
+    }
+
+    function inferFeedFromRows(cols, rows){
+      // Expect: Timestamp | Title | Type | Detail
+      const lower = cols.map(c => String(c).toLowerCase());
+      const find = (cand) => lower.indexOf(cand);
+
+      const tsI = find("timestamp") !== -1 ? find("timestamp") : (find("time") !== -1 ? find("time") : 0);
+      const titleI = find("title") !== -1 ? find("title") : 1;
+      const typeI = find("type") !== -1 ? find("type") : 2;
+      const detailI = find("detail") !== -1 ? find("detail") : (find("notes") !== -1 ? find("notes") : 3);
+
+      const items = rows
+        .filter(r => r.some(v => String(v ?? "").trim() !== ""))
+        .slice(0, 80)
+        .map(r => ({
+          when: parsePossibleDate(r[tsI]),
+          whenText: r[tsI] ? String(r[tsI]) : "",
+          title: r[titleI] ? String(r[titleI]) : "Update",
+          type: r[typeI] ? String(r[typeI]) : "note",
+          detail: r[detailI] ? String(r[detailI]) : ""
+        }))
+        .sort((a,b) => {
+          const ta = a.when ? new Date(a.when).getTime() : 0;
+          const tb = b.when ? new Date(b.when).getTime() : 0;
+          return tb - ta;
+        });
+
+      return items.length ? items : null;
+    }
+
+    function parsePossibleDate(v){
+      if(v == null) return null;
+      // GViz can return dates as "Date(2026,1,25,...)"
+      const s = String(v);
+      if(s.startsWith("Date(")){
+        const inner = s.slice(5, -1);
+        const parts = inner.split(",").map(x => parseInt(x.trim(),10));
+        if(parts.length >= 3 && parts.every(n => Number.isFinite(n))){
+          const [y,m,d,hh=0,mm=0,ss=0] = parts;
+          return new Date(y, m, d, hh, mm, ss).toISOString();
+        }
+      }
+      const d = new Date(s);
+      if(!isNaN(d)) return d.toISOString();
+      return null;
+    }
+
+    // ---------- Fallback demo data (renders even without a sheet) ----------
+    function mockData(){
+      const labels = [];
+      const revenue = [];
+      const pipeline = [];
+      const now = new Date();
+      let baseR = 420000;
+      let baseP = 980000;
+
+      for(let i=11; i>=0; i--){
+        const d = new Date(now);
+        d.setDate(now.getDate() - i*2);
+        labels.push(d.toLocaleDateString("en-ZA", { month:"short", day:"2-digit" }));
+        baseR += (Math.random() * 42000 - 12000);
+        baseP += (Math.random() * 65000 - 18000);
+        revenue.push(Math.max(0, Math.round(baseR)));
+        pipeline.push(Math.max(0, Math.round(baseP)));
+      }
+
+      const feed = [
+        { when: new Date(now.getTime()-1000*60*12).toISOString(), title:"Invoice sent: Retainer (Feb)", type:"invoice", detail:"R 25k" },
+        { when: new Date(now.getTime()-1000*60*48).toISOString(), title:"Pipeline updated: 2 prospects moved to proposal", type:"deal", detail:"Stage: Proposal" },
+        { when: new Date(now.getTime()-1000*60*120).toISOString(), title:"Ops sweep: workflows deduped + SLA alerts enabled", type:"ops", detail:"Automations" },
+        { when: new Date(now.getTime()-1000*60*220).toISOString(), title:"New lead captured: referral loop signup", type:"deal", detail:"Inbound" }
+      ];
+
+      return { labels, revenue, pipeline, status:"OK", feed };
+    }
+
+    // ---------- Render ----------
+    function computeDelta(series){
+      if(!Array.isArray(series) || series.length < 2) return 0;
+      const a = Number(series[series.length-2] || 0);
+      const b = Number(series[series.length-1] || 0);
+      if(a === 0) return b === 0 ? 0 : 100;
+      return ((b - a) / Math.abs(a)) * 100;
+    }
+
+    function setDelta(el, pct){
+      const p = Number(pct || 0);
+      const sign = p > 0 ? "+" : "";
+      el.textContent = `Δ ${sign}${p.toFixed(1)}%`;
+      el.style.color = p >= 0 ? "rgba(20,184,166,.95)" : "rgba(251,113,133,.95)";
+    }
+
+    function updateHeaderConnection(connected){
+      const dot = $("#sheetDot");
+      const label = $("#sheetStatus");
+      if(connected){
+        dot.className = "dot ok";
+        label.textContent = "Sheet: connected";
+      }else{
+        dot.className = "dot warn";
+        label.textContent = "Sheet: using fallback";
+      }
+    }
+
+    function updateLastUpdated(){
+      $("#lastUpdated").textContent =
+        `Last updated: ${new Date().toLocaleString("en-ZA", { hour12:false })}`;
+    }
+
+    function applyData(payload){
+      // Counters: show latest value
+      const revLatest = payload.revenue[payload.revenue.length-1] || 0;
+      const pipLatest = payload.pipeline[payload.pipeline.length-1] || 0;
+
+      animateNumber($("#revenueValue"), revLatest, { format:(v)=> fmtZAR(Math.round(v)) });
+      animateNumber($("#pipelineValue"), pipLatest, { format:(v)=> fmtZAR(Math.round(v)) });
+
+      setDelta($("#revenueDelta"), computeDelta(payload.revenue));
+      setDelta($("#pipelineDelta"), computeDelta(payload.pipeline));
+
+      makeChart($("#lineChart").getContext("2d"), payload.labels, payload.revenue, payload.pipeline);
+
+      // Feed
+      renderFeed(payload.feed || []);
+
+      // System status
+      const cls = setSystemStatus(payload.status || "OK", payload.statusNote || "");
+      // Also reflect in mini widget style subtly
+      $("#envTag").textContent = cls === "ok" ? "PROD" : (cls === "warn" ? "DEGRADED" : "DOWN");
+    }
+
+    // ---------- Main refresh loop ----------
+    let refreshTimer;
+
+    async function refresh(){
+      const hasRealSheetId = CONFIG.SHEET_ID && CONFIG.SHEET_ID !== "PASTE YOUR SHEET ID HERE";
+      const reqCountEl = $("#reqCount");
+
+      try{
+        if(!hasRealSheetId){
+          updateHeaderConnection(false);
+          const m = mockData();
+          applyData(m);
+          updateLastUpdated();
+          showToast("Sheet ID missing",
+            `Replace <code>PASTE YOUR SHEET ID HERE</code> with your real Google Sheet ID to pull live data.`,
+            "SETUP");
+          return;
+        }
+
+        // Attempt GViz metrics from gid 0 (or configured)
+        const metricsGViz = await fetchGVizJSON({ gid: CONFIG.SHEET_GID, tq: "select *" });
+        const { cols: mCols, rows: mRows } = gvizToRows(metricsGViz);
+        const inferred = inferMetricsFromRows(mCols, mRows);
+
+        // Attempt GViz activity:
+        // Many people keep Activity in a different tab with a different gid.
+        // If you only have one gid, you can duplicate activity below metrics or change gid here.
+        const activityGidGuess = String(Number(CONFIG.SHEET_GID) + 1); // naive guess
+        let feedItems = null;
+        try{
+          const feedGViz = await fetchGVizJSON({ gid: activityGidGuess, tq: "select *" });
+          const { cols: fCols, rows: fRows } = gvizToRows(feedGViz);
+          feedItems = inferFeedFromRows(fCols, fRows);
+        }catch(_){
+          // If this fails, we’ll still render metrics.
+        }
+
+        if(!inferred){
+          updateHeaderConnection(false);
+          const m = mockData();
+          applyData(m);
+          updateLastUpdated();
+          showToast("Couldn’t parse sheet",
+            `I reached your sheet, but couldn’t infer columns for <b>Revenue</b>/<b>Pipeline</b>. Check your headers or tab layout.`,
+            "WARN");
+          return;
+        }
+
+        requestSuccessCount++;
+        reqCountEl.textContent = String(requestSuccessCount);
+
+        const payload = {
+          labels: inferred.labels,
+          revenue: inferred.revenue,
+          pipeline: inferred.pipeline,
+          status: inferred.status || "OK",
+          statusNote: "Synced from Google Sheets",
+          feed: feedItems || mockData().feed
+        };
+
+        updateHeaderConnection(true);
+        applyData(payload);
+        updateLastUpdated();
+      }catch(err){
+        console.error(err);
+        updateHeaderConnection(false);
+        const m = mockData();
+        applyData(m);
+        updateLastUpdated();
+        showToast("Live fetch failed",
+          `Using fallback data. If your sheet is private, publish it to the web or use the Sheets API.<br><span style="color:rgba(233,238,248,.7)">(${escapeHtml(err?.message || String(err))})</span>`,
+          "ERROR");
+      }
+    }
+
+    // ---------- Boot ----------
+    $("#refreshBtn").addEventListener("click", refresh);
+
+    // Auto-refresh label
+    $("#refreshLabel").textContent = `Auto: ${Math.round(CONFIG.REFRESH_MS/1000)}s`;
+    refreshTimer = setInterval(refresh, CONFIG.REFRESH_MS);
+
+    startClock();
+    startUptime();
+    refresh();
+
+    // Setup hint if placeholder remains
+    if(CONFIG.SHEET_ID === "PASTE YOUR SHEET ID HERE"){
+      $("#sheetStatus").textContent = "Sheet: needs ID";
+      $("#sheetDot").className = "dot warn";
+    }
+  </script>
+</body>
+</html>
