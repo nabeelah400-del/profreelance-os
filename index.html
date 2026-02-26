@@ -1,90 +1,496 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PROFREELANCE OS CONTROL</title>
 
-<title>PROFREELANCE CONTROL</title>
+  <!-- Optional: Chart.js (free, CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<style>
+  <style>
+    :root{
+      --bg0:#05070f;
+      --bg1:#07090f;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.04);
+      --stroke:rgba(255,255,255,.10);
+      --teal:#00ffd0;
+      --teal2:#25ffe0;
+      --text:#f4f7ff;
+      --muted:rgba(244,247,255,.70);
+      --shadow:0 0 35px rgba(0,255,208,.18);
+      --shadow2:0 0 80px rgba(0,255,208,.10);
+      --radius:22px;
+    }
 
-body{
-background:#05070f;
-color:white;
-font-family:system-ui;
-padding:40px;
-}
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      background:
+        radial-gradient(1000px 600px at 20% 10%, rgba(0,255,208,.12), transparent 55%),
+        radial-gradient(800px 500px at 85% 15%, rgba(80,120,255,.10), transparent 50%),
+        radial-gradient(900px 650px at 50% 110%, rgba(0,255,208,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      padding:40px 18px 60px;
+    }
 
-.panel{
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+    }
 
-background:rgba(255,255,255,0.05);
-padding:30px;
-border-radius:20px;
-margin-bottom:20px;
+    .top{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:22px;
+    }
 
-box-shadow:0 0 20px rgba(0,255,200,0.15);
+    h1{
+      margin:0;
+      font-size:42px;
+      letter-spacing:.5px;
+    }
 
-}
+    .sub{
+      margin-top:8px;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.3;
+    }
 
-.metric{
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.10);
+      backdrop-filter: blur(10px);
+      font-size:13px;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    .dot{
+      width:10px;height:10px;border-radius:999px;
+      background:var(--teal);
+      box-shadow:0 0 14px rgba(0,255,208,.8);
+      animation:pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes pulse{
+      0%,100%{ transform:scale(1); opacity:.9; }
+      50%{ transform:scale(1.45); opacity:1; }
+    }
 
-font-size:48px;
-color:#00ffd0;
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:16px;
+      margin-top:14px;
+    }
 
-animation: glow 2s infinite alternate;
+    .panel{
+      grid-column: span 4;
+      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:var(--radius);
+      padding:22px 22px 20px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+      backdrop-filter: blur(10px);
+      min-height:130px;
+    }
 
-}
+    .panel::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: radial-gradient(500px 200px at 10% 0%, rgba(0,255,208,.18), transparent 55%);
+      opacity:.9;
+      pointer-events:none;
+    }
 
-@keyframes glow{
+    .label{
+      position:relative;
+      z-index:1;
+      font-size:14px;
+      color:var(--muted);
+      letter-spacing:.2px;
+      margin-bottom:10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
 
-from{ text-shadow:0 0 10px #00ffd0; }
+    .tag{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(0,255,208,.10);
+      border:1px solid rgba(0,255,208,.22);
+      color:rgba(0,255,208,.95);
+      box-shadow:0 0 18px rgba(0,255,208,.12);
+      text-transform:uppercase;
+      letter-spacing:.8px;
+    }
 
-to{ text-shadow:0 0 30px #00ffd0; }
+    .metric{
+      position:relative;
+      z-index:1;
+      font-size:50px;
+      font-weight:700;
+      color:var(--teal);
+      line-height:1.05;
+      text-shadow:0 0 14px rgba(0,255,208,.55);
+      animation:glow 2s infinite alternate;
+    }
+    @keyframes glow{
+      from{ text-shadow:0 0 10px rgba(0,255,208,.5); }
+      to{ text-shadow:0 0 26px rgba(0,255,208,.9); }
+    }
 
-}
+    .hint{
+      position:relative;
+      z-index:1;
+      margin-top:10px;
+      font-size:12px;
+      color:rgba(244,247,255,.55);
+    }
 
-</style>
+    .wide{
+      grid-column: span 12;
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:var(--radius);
+      padding:18px 18px 10px;
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(10px);
+    }
 
+    .wide h2{
+      margin:0 0 12px;
+      font-size:16px;
+      color:rgba(244,247,255,.85);
+      letter-spacing:.2px;
+    }
+
+    canvas{ max-width:100%; }
+
+    .footer{
+      margin-top:18px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      color:rgba(244,247,255,.55);
+      font-size:12px;
+    }
+
+    .btn{
+      cursor:pointer;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.05);
+      color:rgba(244,247,255,.8);
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:12px;
+      transition: transform .12s ease, border-color .12s ease;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color:rgba(0,255,208,.25); }
+    .btn:active{ transform: translateY(0px); }
+
+    @media (max-width: 980px){
+      .panel{ grid-column: span 12; }
+      h1{ font-size:34px; }
+      .metric{ font-size:46px; }
+      .top{ align-items:flex-start; flex-direction:column; }
+    }
+  </style>
 </head>
 
 <body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>PROFREELANCE OS</h1>
+        <div class="sub">Live control panel powered by your Google Sheet (free). No logins, no subscriptions.</div>
+      </div>
+      <div class="pill">
+        <span class="dot"></span>
+        <span id="statusText">Connected</span>
+        <span style="opacity:.6">•</span>
+        <span id="lastUpdated">Last updated: —</span>
+      </div>
+    </div>
 
-<h1>PROFREELANCE OS</h1>
+    <div class="grid">
+      <div class="panel">
+        <div class="label">
+          <span>Revenue</span>
+          <span class="tag">ZAR</span>
+        </div>
+        <div class="metric" id="kpiRevenue" data-value="0">—</div>
+        <div class="hint">Pulled from Metrics tab: Revenue</div>
+      </div>
 
-<div class="panel">
+      <div class="panel">
+        <div class="label">
+          <span>Active Clients</span>
+          <span class="tag">LIVE</span>
+        </div>
+        <div class="metric" id="kpiClients" data-value="0">—</div>
+        <div class="hint">Pulled from Metrics tab: Active Clients</div>
+      </div>
 
-Revenue
+      <div class="panel">
+        <div class="label">
+          <span>Pipeline Value</span>
+          <span class="tag">ZAR</span>
+        </div>
+        <div class="metric" id="kpiPipeline" data-value="0">—</div>
+        <div class="hint">Pulled from Metrics tab: Pipeline Value</div>
+      </div>
 
-<div class="metric">
+      <div class="wide">
+        <h2>Signal</h2>
+        <canvas id="kpiChart" height="120"></canvas>
 
-R247,000
+        <div class="footer">
+          <div id="errorText"></div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn" id="btnRefresh">Refresh now</button>
+            <button class="btn" id="btnToggleCORS">Toggle CORS workaround</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-</div>
+  <script>
+    // ======= SETTINGS =======
+    const METRICS_CSV_URL =
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQPgSVSxvqDb3ZT4xfOdWvS7L2femGi-QM_S7yG72TkFYj7RTvRcRIakEnnpfgOXEStak3Q72Q0YBGB/pub?gid=44313312&single=true&output=csv";
 
-</div>
+    // If you get a CORS error in Console, toggle with the button (or set true here)
+    let USE_JINA_CORS_WORKAROUND = false;
 
-<div class="panel">
+    // Refresh cadence (ms)
+    const REFRESH_EVERY = 60 * 1000;
 
-Active Clients
+    // ======= HELPERS =======
+    const jina = (url) => "https://r.jina.ai/http://" + url.replace(/^https?:\/\//, "");
+    const endpoint = () => {
+      const base = USE_JINA_CORS_WORKAROUND ? jina(METRICS_CSV_URL) : METRICS_CSV_URL;
+      return base + (base.includes("?") ? "&" : "?") + "t=" + Date.now(); // cache bust
+    };
 
-<div class="metric">
+    function parseCSV(text){
+      const rows = [];
+      let row = [];
+      let cell = "";
+      let inQuotes = false;
 
-18
+      for (let i = 0; i < text.length; i++){
+        const c = text[i];
+        const next = text[i+1];
 
-</div>
+        if (c === '"' && inQuotes && next === '"'){ cell += '"'; i++; continue; }
+        if (c === '"'){ inQuotes = !inQuotes; continue; }
 
-</div>
+        if (c === "," && !inQuotes){ row.push(cell); cell = ""; continue; }
 
-<div class="panel">
+        if ((c === "\n" || c === "\r") && !inQuotes){
+          if (cell.length || row.length) row.push(cell);
+          if (row.length) rows.push(row);
+          row = [];
+          cell = "";
+          continue;
+        }
 
-Pipeline Value
+        cell += c;
+      }
 
-<div class="metric">
+      if (cell.length || row.length){ row.push(cell); rows.push(row); }
+      return rows.filter(r => r.some(v => String(v).trim() !== ""));
+    }
 
-R1,200,000
+    const toNumber = (v) => {
+      if (v == null) return 0;
+      const cleaned = String(v).replace(/[^0-9.-]/g, "");
+      const n = Number(cleaned);
+      return Number.isFinite(n) ? n : 0;
+    };
 
-</div>
+    const formatZAR = (n) => "R" + Math.round(n).toLocaleString("en-ZA");
+    const formatInt = (n) => Math.round(n).toLocaleString("en-ZA");
 
-</div>
+    function animateNumber(el, target, formatter){
+      const start = Number(el.getAttribute("data-value") || 0);
+      const end = Number(target);
+      const duration = 650;
+      const t0 = performance.now();
 
+      function tick(t){
+        const p = Math.min(1, (t - t0) / duration);
+        const eased = 1 - Math.pow(1 - p, 3);
+        const val = start + (end - start) * eased;
+        el.textContent = formatter(val);
+        if (p < 1) requestAnimationFrame(tick);
+        else el.setAttribute("data-value", String(end));
+      }
+
+      requestAnimationFrame(tick);
+    }
+
+    // ======= UI ELEMENTS =======
+    const elRevenue = document.getElementById("kpiRevenue");
+    const elClients = document.getElementById("kpiClients");
+    const elPipeline = document.getElementById("kpiPipeline");
+    const elUpdated = document.getElementById("lastUpdated");
+    const elStatus = document.getElementById("statusText");
+    const elError = document.getElementById("errorText");
+
+    // ======= CHART (local mini history so it feels alive) =======
+    let chart;
+    const history = {
+      labels: [],
+      revenue: [],
+      pipeline: [],
+      clients: []
+    };
+
+    function pushHistory(rev, pipe, cli){
+      const now = new Date();
+      const label = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+      history.labels.push(label);
+      history.revenue.push(rev);
+      history.pipeline.push(pipe);
+      history.clients.push(cli);
+
+      // keep last 20 points
+      if (history.labels.length > 20){
+        history.labels.shift();
+        history.revenue.shift();
+        history.pipeline.shift();
+        history.clients.shift();
+      }
+    }
+
+    function renderChart(){
+      const ctx = document.getElementById("kpiChart").getContext("2d");
+      if (chart) chart.destroy();
+
+      chart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: history.labels,
+          datasets: [
+            {
+              label: "Revenue (ZAR)",
+              data: history.revenue,
+              borderWidth: 2,
+              tension: 0.35,
+              pointRadius: 0
+            },
+            {
+              label: "Pipeline (ZAR)",
+              data: history.pipeline,
+              borderWidth: 2,
+              tension: 0.35,
+              pointRadius: 0
+            },
+            {
+              label: "Clients",
+              data: history.clients,
+              borderWidth: 2,
+              tension: 0.35,
+              pointRadius: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: { color: "rgba(244,247,255,.75)" }
+            }
+          },
+          scales: {
+            x: { ticks: { color: "rgba(244,247,255,.55)" }, grid: { color: "rgba(255,255,255,.06)" } },
+            y: { ticks: { color: "rgba(244,247,255,.55)" }, grid: { color: "rgba(255,255,255,.06)" } }
+          }
+        }
+      });
+    }
+
+    // ======= FETCH + UPDATE =======
+    async function refreshMetrics(){
+      elError.textContent = "";
+      elStatus.textContent = "Refreshing…";
+
+      const res = await fetch(endpoint(), { cache: "no-store" });
+      if (!res.ok) throw new Error("Fetch failed: " + res.status);
+
+      const text = await res.text();
+      const rows = parseCSV(text);
+
+      // Expected: Metric,Value
+      // Revenue,247000
+      // Active Clients,18
+      // Pipeline Value,1200000
+      const map = {};
+      for (let i = 1; i < rows.length; i++){
+        const key = (rows[i][0] || "").trim().toLowerCase();
+        const val = (rows[i][1] || "").trim();
+        if (key) map[key] = val;
+      }
+
+      const revenue = toNumber(map["revenue"]);
+      const clients = toNumber(map["active clients"]);
+      const pipeline = toNumber(map["pipeline value"]);
+
+      animateNumber(elRevenue, revenue, formatZAR);
+      animateNumber(elClients, clients, formatInt);
+      animateNumber(elPipeline, pipeline, formatZAR);
+
+      pushHistory(revenue, pipeline, clients);
+      renderChart();
+
+      elUpdated.textContent = new Date().toLocaleString();
+      elStatus.textContent = "Connected";
+    }
+
+    function handleError(err){
+      console.error(err);
+      elStatus.textContent = "Error";
+      elError.textContent = "Couldn’t pull the sheet. If Console shows CORS, click “Toggle CORS workaround”.";
+    }
+
+    // Buttons
+    document.getElementById("btnRefresh").addEventListener("click", () => {
+      refreshMetrics().catch(handleError);
+    });
+
+    document.getElementById("btnToggleCORS").addEventListener("click", () => {
+      USE_JINA_CORS_WORKAROUND = !USE_JINA_CORS_WORKAROUND;
+      elError.textContent = "CORS workaround: " + (USE_JINA_CORS_WORKAROUND ? "ON" : "OFF") + " (refreshing…)";
+      refreshMetrics().catch(handleError);
+    });
+
+    // Initial load + loop
+    refreshMetrics().catch(handleError);
+    setInterval(() => refreshMetrics().catch(handleError), REFRESH_EVERY);
+  </script>
 </body>
-
 </html>
