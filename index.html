@@ -1,420 +1,206 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PROFREELANCE OS CONTROL</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PROFREELANCE OS</title>
 
-  <!-- Optional: Chart.js (free, CDN) -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
   <style>
     :root{
-      --bg0:#05070f;
-      --bg1:#07090f;
-      --card:rgba(255,255,255,.06);
-      --card2:rgba(255,255,255,.04);
-      --stroke:rgba(255,255,255,.10);
+      --bg:#05070f;
+      --card:rgba(255,255,255,0.05);
+      --stroke:rgba(255,255,255,0.08);
+      --glow:rgba(0,255,208,0.18);
       --teal:#00ffd0;
-      --teal2:#25ffe0;
-      --text:#f4f7ff;
-      --muted:rgba(244,247,255,.70);
-      --shadow:0 0 35px rgba(0,255,208,.18);
-      --shadow2:0 0 80px rgba(0,255,208,.10);
-      --radius:22px;
+      --muted:rgba(255,255,255,0.55);
     }
-
-    *{ box-sizing:border-box; }
+    *{box-sizing:border-box}
     body{
       margin:0;
-      background:
-        radial-gradient(1000px 600px at 20% 10%, rgba(0,255,208,.12), transparent 55%),
-        radial-gradient(800px 500px at 85% 15%, rgba(80,120,255,.10), transparent 50%),
-        radial-gradient(900px 650px at 50% 110%, rgba(0,255,208,.10), transparent 55%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
-      color:var(--text);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      padding:40px 18px 60px;
+      background:radial-gradient(1200px 700px at 20% 10%, rgba(0,255,208,0.08), transparent 55%),
+                 radial-gradient(900px 600px at 80% 20%, rgba(0,140,255,0.08), transparent 55%),
+                 var(--bg);
+      color:white;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      padding:40px;
     }
-
-    .wrap{
-      max-width:1100px;
-      margin:0 auto;
+    header{
+      display:flex; align-items:flex-end; justify-content:space-between;
+      gap:16px; margin-bottom:18px;
     }
-
-    .top{
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap:16px;
-      margin-bottom:22px;
-    }
-
-    h1{
-      margin:0;
-      font-size:42px;
-      letter-spacing:.5px;
-    }
-
-    .sub{
-      margin-top:8px;
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.3;
-    }
-
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding:10px 14px;
-      border-radius:999px;
-      background:rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.10);
+    h1{margin:0; font-size:44px; letter-spacing:0.5px}
+    .sub{color:var(--muted); margin-top:6px}
+    .badge{
+      display:flex; gap:10px; align-items:center;
+      padding:10px 14px; border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,0.03);
       backdrop-filter: blur(10px);
-      font-size:13px;
-      color:var(--muted);
-      white-space:nowrap;
+      font-size:14px; color:rgba(255,255,255,0.75);
     }
-    .dot{
-      width:10px;height:10px;border-radius:999px;
-      background:var(--teal);
-      box-shadow:0 0 14px rgba(0,255,208,.8);
-      animation:pulse 1.8s ease-in-out infinite;
-    }
-    @keyframes pulse{
-      0%,100%{ transform:scale(1); opacity:.9; }
-      50%{ transform:scale(1.45); opacity:1; }
-    }
-
+    .dot{width:10px;height:10px;border-radius:999px;background:var(--teal); box-shadow:0 0 18px var(--teal)}
     .grid{
       display:grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap:16px;
-      margin-top:14px;
+      grid-template-columns: repeat(3, minmax(240px, 1fr));
+      gap:18px;
+      margin-top:16px;
     }
-
     .panel{
-      grid-column: span 4;
-      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:var(--radius);
-      padding:22px 22px 20px;
-      box-shadow: var(--shadow);
-      position:relative;
-      overflow:hidden;
-      backdrop-filter: blur(10px);
-      min-height:130px;
+      background:var(--card);
+      border:1px solid var(--stroke);
+      padding:22px;
+      border-radius:22px;
+      box-shadow:0 0 28px var(--glow);
+      backdrop-filter: blur(12px);
+      min-height:124px;
     }
-
-    .panel::before{
-      content:"";
-      position:absolute;
-      inset:-2px;
-      background: radial-gradient(500px 200px at 10% 0%, rgba(0,255,208,.18), transparent 55%);
-      opacity:.9;
-      pointer-events:none;
+    .label{color:rgba(255,255,255,0.7); font-size:14px; display:flex; justify-content:space-between; gap:12px}
+    .pill{
+      font-size:12px; padding:4px 10px; border-radius:999px;
+      border:1px solid var(--stroke); color:rgba(255,255,255,0.7);
+      background:rgba(255,255,255,0.03);
     }
-
-    .label{
-      position:relative;
-      z-index:1;
-      font-size:14px;
-      color:var(--muted);
-      letter-spacing:.2px;
-      margin-bottom:10px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-    }
-
-    .tag{
-      font-size:12px;
-      padding:6px 10px;
-      border-radius:999px;
-      background:rgba(0,255,208,.10);
-      border:1px solid rgba(0,255,208,.22);
-      color:rgba(0,255,208,.95);
-      box-shadow:0 0 18px rgba(0,255,208,.12);
-      text-transform:uppercase;
-      letter-spacing:.8px;
-    }
-
     .metric{
-      position:relative;
-      z-index:1;
-      font-size:50px;
-      font-weight:700;
-      color:var(--teal);
-      line-height:1.05;
-      text-shadow:0 0 14px rgba(0,255,208,.55);
-      animation:glow 2s infinite alternate;
-    }
-    @keyframes glow{
-      from{ text-shadow:0 0 10px rgba(0,255,208,.5); }
-      to{ text-shadow:0 0 26px rgba(0,255,208,.9); }
-    }
-
-    .hint{
-      position:relative;
-      z-index:1;
       margin-top:10px;
-      font-size:12px;
-      color:rgba(244,247,255,.55);
+      font-size:56px;
+      color:var(--teal);
+      letter-spacing:1px;
+      text-shadow:0 0 18px rgba(0,255,208,0.35);
     }
-
-    .wide{
-      grid-column: span 12;
-      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:var(--radius);
-      padding:18px 18px 10px;
-      box-shadow: var(--shadow2);
-      backdrop-filter: blur(10px);
-    }
-
-    .wide h2{
-      margin:0 0 12px;
-      font-size:16px;
-      color:rgba(244,247,255,.85);
-      letter-spacing:.2px;
-    }
-
-    canvas{ max-width:100%; }
-
-    .footer{
+    .note{margin-top:8px; color:rgba(255,255,255,0.45); font-size:12px}
+    .chartWrap{
       margin-top:18px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      flex-wrap:wrap;
-      color:rgba(244,247,255,.55);
-      font-size:12px;
+      background:rgba(255,255,255,0.03);
+      border:1px solid var(--stroke);
+      border-radius:22px;
+      padding:18px 18px 10px 18px;
+      box-shadow:0 0 28px rgba(0,255,208,0.10);
+      backdrop-filter: blur(12px);
     }
-
-    .btn{
-      cursor:pointer;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.05);
-      color:rgba(244,247,255,.8);
-      padding:10px 12px;
-      border-radius:12px;
-      font-size:12px;
-      transition: transform .12s ease, border-color .12s ease;
-      user-select:none;
-    }
-    .btn:hover{ transform: translateY(-1px); border-color:rgba(0,255,208,.25); }
-    .btn:active{ transform: translateY(0px); }
-
-    @media (max-width: 980px){
-      .panel{ grid-column: span 12; }
-      h1{ font-size:34px; }
-      .metric{ font-size:46px; }
-      .top{ align-items:flex-start; flex-direction:column; }
-    }
+    .chartTitle{font-size:18px; color:rgba(255,255,255,0.85); margin:0 0 8px 0}
+    canvas{width:100% !important; height:320px !important;}
+    @media(max-width:980px){ .grid{grid-template-columns:1fr} h1{font-size:36px} }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="top">
-      <div>
-        <h1>PROFREELANCE OS</h1>
-        <div class="sub">Live control panel powered by your Google Sheet (free). No logins, no subscriptions.</div>
-      </div>
-      <div class="pill">
-        <span class="dot"></span>
-        <span id="statusText">Connected</span>
-        <span style="opacity:.6">•</span>
-        <span id="lastUpdated">Last updated: —</span>
-      </div>
+  <header>
+    <div>
+      <h1>PROFREELANCE OS</h1>
+      <div class="sub">Live control panel powered by your Google Sheet (free). No logins, no subscriptions.</div>
+    </div>
+    <div class="badge">
+      <span class="dot"></span>
+      <span id="statusText">Connecting…</span>
+    </div>
+  </header>
+
+  <section class="grid">
+    <div class="panel">
+      <div class="label"><span>Revenue</span><span class="pill">ZAR</span></div>
+      <div class="metric" id="revVal">—</div>
+      <div class="note" id="revNote">Pulled from Metrics tab: Revenue</div>
     </div>
 
-    <div class="grid">
-      <div class="panel">
-        <div class="label">
-          <span>Revenue</span>
-          <span class="tag">ZAR</span>
-        </div>
-        <div class="metric" id="kpiRevenue" data-value="0">—</div>
-        <div class="hint">Pulled from Metrics tab: Revenue</div>
-      </div>
-
-      <div class="panel">
-        <div class="label">
-          <span>Active Clients</span>
-          <span class="tag">LIVE</span>
-        </div>
-        <div class="metric" id="kpiClients" data-value="0">—</div>
-        <div class="hint">Pulled from Metrics tab: Active Clients</div>
-      </div>
-
-      <div class="panel">
-        <div class="label">
-          <span>Pipeline Value</span>
-          <span class="tag">ZAR</span>
-        </div>
-        <div class="metric" id="kpiPipeline" data-value="0">—</div>
-        <div class="hint">Pulled from Metrics tab: Pipeline Value</div>
-      </div>
-
-      <div class="wide">
-        <h2>Signal</h2>
-        <canvas id="kpiChart" height="120"></canvas>
-
-        <div class="footer">
-          <div id="errorText"></div>
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <button class="btn" id="btnRefresh">Refresh now</button>
-            <button class="btn" id="btnToggleCORS">Toggle CORS workaround</button>
-          </div>
-        </div>
-      </div>
+    <div class="panel">
+      <div class="label"><span>Active Clients</span><span class="pill">LIVE</span></div>
+      <div class="metric" id="clientsVal">—</div>
+      <div class="note" id="clientsNote">Pulled from Metrics tab: Active Clients</div>
     </div>
-  </div>
+
+    <div class="panel">
+      <div class="label"><span>Pipeline Value</span><span class="pill">ZAR</span></div>
+      <div class="metric" id="pipeVal">—</div>
+      <div class="note" id="pipeNote">Pulled from Metrics tab: Pipeline Value</div>
+    </div>
+  </section>
+
+  <section class="chartWrap">
+    <p class="chartTitle">Signal</p>
+    <canvas id="signalChart"></canvas>
+  </section>
 
   <script>
-    // ======= SETTINGS =======
-    const METRICS_CSV_URL =
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQPgSVSxvqDb3ZT4xfOdWvS7L2femGi-QM_S7yG72TkFYj7RTvRcRIakEnnpfgOXEStak3Q72Q0YBGB/pub?gid=44313312&single=true&output=csv";
+    // ✅ Your published CSV:
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQPgSVSxvqDb3ZT4xfOdWvS7L2femGi-QM_S7yG72TkFYj7RTvRcRIakEnnpfgOXEStak3Q72Q0YBGB/pub?gid=44313312&single=true&output=csv";
 
-    // If you get a CORS error in Console, toggle with the button (or set true here)
-    let USE_JINA_CORS_WORKAROUND = false;
+    const LS_KEY = "profreelance_os_history_v1";
+    const MAX_POINTS = 30;        // keep it light
+    const REFRESH_MS = 60_000;    // 1 min
 
-    // Refresh cadence (ms)
-    const REFRESH_EVERY = 60 * 1000;
+    const el = (id) => document.getElementById(id);
 
-    // ======= HELPERS =======
-    const jina = (url) => "https://r.jina.ai/http://" + url.replace(/^https?:\/\//, "");
-    const endpoint = () => {
-      const base = USE_JINA_CORS_WORKAROUND ? jina(METRICS_CSV_URL) : METRICS_CSV_URL;
-      return base + (base.includes("?") ? "&" : "?") + "t=" + Date.now(); // cache bust
-    };
+    function fmtZAR(n){
+      const x = Number(n || 0);
+      return "R" + x.toLocaleString("en-ZA", { maximumFractionDigits: 0 });
+    }
 
     function parseCSV(text){
-      const rows = [];
-      let row = [];
-      let cell = "";
-      let inQuotes = false;
-
-      for (let i = 0; i < text.length; i++){
-        const c = text[i];
-        const next = text[i+1];
-
-        if (c === '"' && inQuotes && next === '"'){ cell += '"'; i++; continue; }
-        if (c === '"'){ inQuotes = !inQuotes; continue; }
-
-        if (c === "," && !inQuotes){ row.push(cell); cell = ""; continue; }
-
-        if ((c === "\n" || c === "\r") && !inQuotes){
-          if (cell.length || row.length) row.push(cell);
-          if (row.length) rows.push(row);
-          row = [];
-          cell = "";
-          continue;
-        }
-
-        cell += c;
+      // expects:
+      // Metric,Value
+      // Revenue,247000
+      // Active Clients,18
+      // Pipeline Value,1200000
+      const lines = text.trim().split(/\r?\n/).map(l => l.split(","));
+      const out = {};
+      for(let i=1;i<lines.length;i++){
+        const k = (lines[i][0] || "").trim();
+        const v = (lines[i][1] || "").trim();
+        out[k] = v;
       }
-
-      if (cell.length || row.length){ row.push(cell); rows.push(row); }
-      return rows.filter(r => r.some(v => String(v).trim() !== ""));
+      return out;
     }
 
-    const toNumber = (v) => {
-      if (v == null) return 0;
-      const cleaned = String(v).replace(/[^0-9.-]/g, "");
-      const n = Number(cleaned);
-      return Number.isFinite(n) ? n : 0;
-    };
-
-    const formatZAR = (n) => "R" + Math.round(n).toLocaleString("en-ZA");
-    const formatInt = (n) => Math.round(n).toLocaleString("en-ZA");
-
-    function animateNumber(el, target, formatter){
-      const start = Number(el.getAttribute("data-value") || 0);
-      const end = Number(target);
-      const duration = 650;
-      const t0 = performance.now();
-
-      function tick(t){
-        const p = Math.min(1, (t - t0) / duration);
-        const eased = 1 - Math.pow(1 - p, 3);
-        const val = start + (end - start) * eased;
-        el.textContent = formatter(val);
-        if (p < 1) requestAnimationFrame(tick);
-        else el.setAttribute("data-value", String(end));
-      }
-
-      requestAnimationFrame(tick);
+    function loadHistory(){
+      try{
+        const raw = localStorage.getItem(LS_KEY);
+        if(!raw) return [];
+        const data = JSON.parse(raw);
+        return Array.isArray(data) ? data : [];
+      }catch{ return []; }
     }
 
-    // ======= UI ELEMENTS =======
-    const elRevenue = document.getElementById("kpiRevenue");
-    const elClients = document.getElementById("kpiClients");
-    const elPipeline = document.getElementById("kpiPipeline");
-    const elUpdated = document.getElementById("lastUpdated");
-    const elStatus = document.getElementById("statusText");
-    const elError = document.getElementById("errorText");
+    function saveHistory(arr){
+      localStorage.setItem(LS_KEY, JSON.stringify(arr.slice(-MAX_POINTS)));
+    }
 
-    // ======= CHART (local mini history so it feels alive) =======
     let chart;
-    const history = {
-      labels: [],
-      revenue: [],
-      pipeline: [],
-      clients: []
-    };
 
-    function pushHistory(rev, pipe, cli){
-      const now = new Date();
-      const label = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-
-      history.labels.push(label);
-      history.revenue.push(rev);
-      history.pipeline.push(pipe);
-      history.clients.push(cli);
-
-      // keep last 20 points
-      if (history.labels.length > 20){
-        history.labels.shift();
-        history.revenue.shift();
-        history.pipeline.shift();
-        history.clients.shift();
-      }
-    }
-
-    function renderChart(){
-      const ctx = document.getElementById("kpiChart").getContext("2d");
-      if (chart) chart.destroy();
-
+    function buildChart(initial){
+      const ctx = el("signalChart");
       chart = new Chart(ctx, {
         type: "line",
         data: {
-          labels: history.labels,
+          labels: initial.map(p => p.t),
           datasets: [
             {
               label: "Revenue (ZAR)",
-              data: history.revenue,
+              data: initial.map(p => p.revenue),
+              tension: 0.25,
               borderWidth: 2,
-              tension: 0.35,
-              pointRadius: 0
+              pointRadius: 4,       // ✅ makes single points visible :contentReference[oaicite:1]{index=1}
+              pointHoverRadius: 6,
+              yAxisID: "yMoney"
             },
             {
               label: "Pipeline (ZAR)",
-              data: history.pipeline,
+              data: initial.map(p => p.pipeline),
+              tension: 0.25,
               borderWidth: 2,
-              tension: 0.35,
-              pointRadius: 0
+              pointRadius: 4,
+              pointHoverRadius: 6,
+              yAxisID: "yMoney"
             },
             {
               label: "Clients",
-              data: history.clients,
+              data: initial.map(p => p.clients),
+              tension: 0.25,
               borderWidth: 2,
-              tension: 0.35,
-              pointRadius: 0
+              pointRadius: 4,
+              pointHoverRadius: 6,
+              yAxisID: "yClients"
             }
           ]
         },
@@ -422,75 +208,79 @@
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: {
-              labels: { color: "rgba(244,247,255,.75)" }
-            }
+            legend: { labels: { color: "rgba(255,255,255,0.75)" } },
+            tooltip: { mode: "index", intersect: false }
           },
+          interaction: { mode: "index", intersect: false },
           scales: {
-            x: { ticks: { color: "rgba(244,247,255,.55)" }, grid: { color: "rgba(255,255,255,.06)" } },
-            y: { ticks: { color: "rgba(244,247,255,.55)" }, grid: { color: "rgba(255,255,255,.06)" } }
+            x: {
+              ticks: { color: "rgba(255,255,255,0.5)" },
+              grid: { color: "rgba(255,255,255,0.06)" }
+            },
+            yMoney: {
+              position: "left",
+              ticks: { color: "rgba(255,255,255,0.5)" },
+              grid: { color: "rgba(255,255,255,0.06)" },
+              suggestedMin: 0, // ✅ helps axis behave nicely :contentReference[oaicite:2]{index=2}
+            },
+            yClients: {
+              position: "right",
+              ticks: { color: "rgba(255,255,255,0.5)" },
+              grid: { drawOnChartArea: false },
+              suggestedMin: 0
+            }
           }
         }
       });
     }
 
-    // ======= FETCH + UPDATE =======
-    async function refreshMetrics(){
-      elError.textContent = "";
-      elStatus.textContent = "Refreshing…";
+    function updateChart(history){
+      chart.data.labels = history.map(p => p.t);
+      chart.data.datasets[0].data = history.map(p => p.revenue);
+      chart.data.datasets[1].data = history.map(p => p.pipeline);
+      chart.data.datasets[2].data = history.map(p => p.clients);
+      chart.update();
+    }
 
-      const res = await fetch(endpoint(), { cache: "no-store" });
-      if (!res.ok) throw new Error("Fetch failed: " + res.status);
+    async function refresh(){
+      try{
+        const res = await fetch(CSV_URL, { cache: "no-store" });
+        const text = await res.text();
+        const data = parseCSV(text);
 
-      const text = await res.text();
-      const rows = parseCSV(text);
+        const revenue = Number(data["Revenue"] || 0);
+        const clients = Number(data["Active Clients"] || 0);
+        const pipeline = Number(data["Pipeline Value"] || 0);
 
-      // Expected: Metric,Value
-      // Revenue,247000
-      // Active Clients,18
-      // Pipeline Value,1200000
-      const map = {};
-      for (let i = 1; i < rows.length; i++){
-        const key = (rows[i][0] || "").trim().toLowerCase();
-        const val = (rows[i][1] || "").trim();
-        if (key) map[key] = val;
+        el("revVal").textContent = fmtZAR(revenue);
+        el("clientsVal").textContent = (clients || 0).toLocaleString("en-ZA");
+        el("pipeVal").textContent = fmtZAR(pipeline);
+
+        const now = new Date();
+        el("statusText").textContent = `Connected · ${now.toLocaleDateString()} , ${now.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})}`;
+
+        // Build growing history in the browser
+        const history = loadHistory();
+        history.push({
+          t: now.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"}),
+          revenue, clients, pipeline
+        });
+        saveHistory(history);
+
+        if(!chart){
+          buildChart(history.slice(-MAX_POINTS));
+        }else{
+          updateChart(history.slice(-MAX_POINTS));
+        }
+
+      } catch (e){
+        el("statusText").textContent = "Disconnected";
       }
-
-      const revenue = toNumber(map["revenue"]);
-      const clients = toNumber(map["active clients"]);
-      const pipeline = toNumber(map["pipeline value"]);
-
-      animateNumber(elRevenue, revenue, formatZAR);
-      animateNumber(elClients, clients, formatInt);
-      animateNumber(elPipeline, pipeline, formatZAR);
-
-      pushHistory(revenue, pipeline, clients);
-      renderChart();
-
-      elUpdated.textContent = new Date().toLocaleString();
-      elStatus.textContent = "Connected";
     }
 
-    function handleError(err){
-      console.error(err);
-      elStatus.textContent = "Error";
-      elError.textContent = "Couldn’t pull the sheet. If Console shows CORS, click “Toggle CORS workaround”.";
-    }
-
-    // Buttons
-    document.getElementById("btnRefresh").addEventListener("click", () => {
-      refreshMetrics().catch(handleError);
-    });
-
-    document.getElementById("btnToggleCORS").addEventListener("click", () => {
-      USE_JINA_CORS_WORKAROUND = !USE_JINA_CORS_WORKAROUND;
-      elError.textContent = "CORS workaround: " + (USE_JINA_CORS_WORKAROUND ? "ON" : "OFF") + " (refreshing…)";
-      refreshMetrics().catch(handleError);
-    });
-
-    // Initial load + loop
-    refreshMetrics().catch(handleError);
-    setInterval(() => refreshMetrics().catch(handleError), REFRESH_EVERY);
+    // Start
+    refresh();
+    setInterval(refresh, REFRESH_MS);
   </script>
 </body>
 </html>
