@@ -2,245 +2,192 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PROFREELANCE OS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PROFREELANCE OS CONTROL PANEL</title>
 
-  <!-- Chart.js -->
+  <!-- Chart.js (UMD) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
   <style>
     :root{
       --bg0:#05070f;
-      --bg1:#070a16;
-      --glass: rgba(255,255,255,.06);
-      --glass2: rgba(255,255,255,.045);
+      --bg1:#070a14;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.04);
       --stroke: rgba(255,255,255,.10);
-      --stroke2: rgba(255,255,255,.16);
+      --stroke2: rgba(255,255,255,.14);
       --text: rgba(255,255,255,.92);
       --muted: rgba(255,255,255,.62);
-      --muted2: rgba(255,255,255,.45);
+      --muted2: rgba(255,255,255,.42);
       --teal:#14b8a6;
       --teal2:#00ffd0;
-      --warn:#ffcc66;
-      --danger:#ff5a7a;
       --shadow: 0 30px 80px rgba(0,0,0,.55);
-      --radius: 22px;
-      --radius2: 18px;
+      --glow: 0 0 0 1px rgba(20,184,166,.18), 0 0 40px rgba(20,184,166,.12);
+      --r: 18px;
+      --r2: 26px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
     body{
       margin:0;
-      font-family:var(--sans);
-      color:var(--text);
+      font-family: var(--sans);
+      color: var(--text);
       background:
-        radial-gradient(1200px 900px at 14% 12%, rgba(20,184,166,.18), transparent 55%),
-        radial-gradient(900px 700px at 88% 18%, rgba(0,255,208,.10), transparent 60%),
-        radial-gradient(1200px 900px at 70% 92%, rgba(20,184,166,.08), transparent 55%),
+        radial-gradient(1200px 700px at 15% -10%, rgba(20,184,166,.18), transparent 60%),
+        radial-gradient(900px 600px at 85% 0%, rgba(0,255,208,.10), transparent 55%),
+        radial-gradient(900px 600px at 50% 120%, rgba(20,184,166,.10), transparent 55%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
       overflow-x:hidden;
     }
 
-    /* subtle grid */
-    body:before{
-      content:"";
+    /* subtle animated grid */
+    .bg-grid{
       position:fixed; inset:0;
-      background:
-        linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px);
-      background-size: 92px 92px;
-      opacity:.05;
       pointer-events:none;
-      mix-blend-mode: screen;
+      opacity:.22;
+      background-image:
+        linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px);
+      background-size: 44px 44px;
+      filter: blur(.0px);
+      mask-image: radial-gradient(circle at 30% 20%, black 0%, transparent 65%);
+      animation: drift 18s linear infinite;
     }
-
-    /* noise layer */
-    body:after{
-      content:"";
-      position:fixed; inset:0;
-      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
-      opacity:.06;
-      pointer-events:none;
+    @keyframes drift{
+      0%{ transform: translate3d(0,0,0); }
+      50%{ transform: translate3d(18px, 10px,0); }
+      100%{ transform: translate3d(0,0,0); }
     }
 
     .app{
       display:grid;
-      grid-template-columns: 320px 1fr;
+      grid-template-columns: 280px 1fr;
       min-height:100vh;
     }
 
     /* Sidebar */
     .sidebar{
-      position:sticky;
-      top:0;
+      position:sticky; top:0;
       height:100vh;
-      padding:24px 18px;
-      border-right:1px solid rgba(255,255,255,.08);
-      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
+      padding:20px 16px;
+      border-right: 1px solid rgba(255,255,255,.06);
+      background: linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.08));
+      backdrop-filter: blur(14px);
     }
 
     .brand{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
+      display:flex; align-items:center; gap:12px;
       padding:14px 14px;
-      border-radius: 18px;
-      background: rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.10);
-      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+      border-radius: var(--r2);
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: var(--glow);
     }
-    .brandLeft{
-      display:flex;flex-direction:column;gap:6px;
+    .brand .dot{
+      width:12px; height:12px; border-radius:999px;
+      background: var(--teal);
+      box-shadow: 0 0 0 6px rgba(20,184,166,.14), 0 0 30px rgba(20,184,166,.35);
     }
-    .brandName{
-      font-weight:900;
-      letter-spacing:.8px;
+    .brand h1{
+      margin:0;
       font-size:14px;
-      opacity:.95;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color: rgba(255,255,255,.88);
     }
-    .brandSub{
-      font-family:var(--mono);
+    .brand p{
+      margin:2px 0 0;
       font-size:12px;
-      color:var(--muted2);
-      display:flex;
-      align-items:center;
-      gap:8px;
-    }
-    .pulseDot{
-      width:8px;height:8px;border-radius:999px;
-      background:var(--teal);
-      box-shadow:0 0 0 6px rgba(20,184,166,.15), 0 0 18px rgba(20,184,166,.5);
-      animation:pulse 2.2s ease-in-out infinite;
-    }
-    @keyframes pulse{
-      0%,100%{transform:scale(1); opacity:1}
-      50%{transform:scale(1.15); opacity:.8}
+      color: var(--muted);
     }
 
     .nav{
       margin-top:16px;
       display:flex;
       flex-direction:column;
-      gap:10px;
+      gap:8px;
+      padding:6px 2px;
     }
-    .navBtn{
+    .nav a{
+      text-decoration:none;
+      color: var(--muted);
       display:flex;
       align-items:center;
-      gap:12px;
-      width:100%;
+      justify-content:space-between;
+      padding:12px 12px;
+      border-radius: 14px;
+      border: 1px solid transparent;
+      background: transparent;
+      transition: .18s ease;
+    }
+    .nav a:hover{
+      color: rgba(255,255,255,.92);
+      background: rgba(255,255,255,.04);
+      border-color: rgba(255,255,255,.07);
+    }
+    .nav a.active{
+      color: rgba(255,255,255,.94);
+      background: rgba(20,184,166,.10);
+      border-color: rgba(20,184,166,.22);
+      box-shadow: 0 0 0 1px rgba(20,184,166,.10);
+    }
+    .nav .pill{
+      font-family: var(--mono);
+      font-size:11px;
+      padding:4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      color: rgba(255,255,255,.70);
+      background: rgba(255,255,255,.03);
+    }
+
+    .sidebar-footer{
+      position:absolute;
+      left:16px; right:16px;
+      bottom:16px;
       padding:12px 12px;
       border-radius: 16px;
-      background: rgba(255,255,255,.03);
-      border:1px solid rgba(255,255,255,.08);
-      color: rgba(255,255,255,.82);
-      cursor:pointer;
-      transition: .18s ease;
-      text-align:left;
-    }
-    .navBtn:hover{
-      transform: translateY(-1px);
-      border-color: rgba(20,184,166,.28);
-      box-shadow: 0 20px 60px rgba(0,0,0,.35);
-      background: rgba(255,255,255,.05);
-    }
-    .navBtn.active{
-      background: rgba(20,184,166,.10);
-      border-color: rgba(20,184,166,.30);
-      color: rgba(255,255,255,.94);
-    }
-
-    .glassIcon{
-      width:38px;height:38px;
-      border-radius: 14px;
-      display:grid;place-items:center;
-      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
-      border:1px solid rgba(255,255,255,.10);
-      box-shadow:
-        0 14px 40px rgba(0,0,0,.35),
-        0 0 40px rgba(20,184,166,.08);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      flex:0 0 auto;
-      position:relative;
-      overflow:hidden;
-    }
-    .glassIcon:before{
-      content:"";
-      position:absolute; inset:-1px;
-      background: radial-gradient(220px 90px at 20% 10%, rgba(20,184,166,.18), transparent 60%);
-      opacity:.95;
-      pointer-events:none;
-    }
-    .glassIcon svg{position:relative; opacity:.92}
-
-    .navText{
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-    }
-    .navTitle{
-      font-weight:800;
-      font-size:13.5px;
-      letter-spacing:.2px;
-    }
-    .navHint{
-      font-family:var(--mono);
-      font-size:11.5px;
-      color:var(--muted2);
-    }
-
-    .sideFooter{
-      position:absolute;
-      left:18px; right:18px; bottom:18px;
-      padding:14px 14px;
-      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.08);
       background: rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.10);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
     }
-    .statusRow{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
+    .sidebar-footer .row{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
     }
-    .statusLabel{
-      display:flex;
-      flex-direction:column;
-      gap:2px;
+    .status{
+      display:flex; align-items:center; gap:10px;
+      font-size:12px;
+      color: var(--muted);
     }
-    .statusLabel b{font-size:12.5px}
-    .statusLabel span{
-      font-family:var(--mono);
-      font-size:11.5px;
-      color:var(--muted2);
+    .led{
+      width:10px; height:10px; border-radius:999px;
+      background: rgba(255,255,255,.25);
+      box-shadow:none;
     }
-    .statusPill{
-      font-family:var(--mono);
-      font-size:11.5px;
-      padding:7px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.22);
-      color: rgba(255,255,255,.78);
-      white-space:nowrap;
+    .led.connected{
+      background: var(--teal);
+      box-shadow: 0 0 0 6px rgba(20,184,166,.14), 0 0 18px rgba(20,184,166,.35);
     }
-    .pillOk{ border-color: rgba(20,184,166,.25); background: rgba(20,184,166,.10); }
-    .pillWarn{ border-color: rgba(255,204,102,.25); background: rgba(255,204,102,.10); }
-    .pillErr{ border-color: rgba(255,90,122,.28); background: rgba(255,90,122,.10); }
+    .led.degraded{
+      background: #fbbf24;
+      box-shadow: 0 0 0 6px rgba(251,191,36,.14), 0 0 18px rgba(251,191,36,.30);
+    }
+    .led.error{
+      background: #fb7185;
+      box-shadow: 0 0 0 6px rgba(251,113,133,.14), 0 0 18px rgba(251,113,133,.30);
+    }
 
     /* Main */
     .main{
-      padding:28px 26px 70px;
-      max-width: 1200px;
+      padding:24px;
+      max-width: 1240px;
+      width:100%;
+      margin:0 auto;
     }
+
     .topbar{
       display:flex;
       align-items:flex-start;
@@ -248,885 +195,826 @@
       gap:16px;
       margin-bottom:18px;
     }
-    .h1{
+    .title h2{
       margin:0;
-      font-size: clamp(28px, 3.4vw, 44px);
-      letter-spacing:.8px;
-      font-weight: 900;
+      font-size:38px;
+      letter-spacing:.02em;
     }
-    .sub{
+    .title .sub{
       margin-top:8px;
-      color:var(--muted);
-      max-width:720px;
-      line-height:1.35;
-      font-size:14.5px;
+      color: var(--muted);
+      font-size:13px;
+      font-family: var(--mono);
     }
 
-    .actions{
+    .top-widgets{
       display:flex;
       gap:10px;
+      align-items:center;
       flex-wrap:wrap;
       justify-content:flex-end;
     }
-    .btn{
-      cursor:pointer;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      padding: 10px 12px;
-      border-radius: 14px;
-      font-size: 12.5px;
-      font-family: var(--mono);
-      transition: .18s ease;
-    }
-    .btn:hover{
-      transform: translateY(-1px);
-      border-color: rgba(20,184,166,.30);
-      box-shadow: 0 18px 60px rgba(0,0,0,.35);
-    }
-    .btnPrimary{
-      background: rgba(20,184,166,.12);
-      border-color: rgba(20,184,166,.30);
-    }
 
-    .content{
-      margin-top:16px;
+    .chip{
+      padding:10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      color: rgba(255,255,255,.78);
+      font-size:12px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      backdrop-filter: blur(10px);
+    }
+    .chip b{
+      color: rgba(255,255,255,.92);
+      font-family: var(--mono);
+      font-weight:600;
+      font-size:12px;
+    }
+    .clock{
+      font-family: var(--mono);
+      font-size:12px;
+      letter-spacing:.04em;
     }
 
     .grid{
       display:grid;
       grid-template-columns: repeat(12, 1fr);
-      gap: 14px;
+      gap:14px;
+      margin-top: 10px;
     }
 
     .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      grid-column: span 12;
+      border-radius: var(--r2);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
       border: 1px solid rgba(255,255,255,.10);
-      border-radius: var(--radius);
       box-shadow: var(--shadow);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
       overflow:hidden;
       position:relative;
     }
-    .card:before{
+    .card::before{
       content:"";
-      position:absolute; inset:-1px;
-      border-radius: inherit;
-      background: radial-gradient(800px 220px at 30% 10%, rgba(20,184,166,.15), transparent 55%);
+      position:absolute; inset:-2px;
+      background: radial-gradient(500px 200px at 20% 0%, rgba(20,184,166,.18), transparent 65%);
       pointer-events:none;
-      opacity:.9;
+      opacity:.8;
     }
-    .cardInner{
-      position:relative;
-      padding: 18px 18px 16px;
-    }
+    .card-inner{ position:relative; padding:18px; }
 
-    .kpi{ grid-column: span 4; min-height:118px; }
-    .kpiTop{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
-    .label{ font-size: 13px; color: rgba(255,255,255,.78); letter-spacing:.2px; }
-    .chip{
-      font-size: 11px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      background: rgba(20,184,166,.10);
-      border:1px solid rgba(20,184,166,.25);
-      color: rgba(255,255,255,.9);
-      font-family: var(--mono);
-      letter-spacing:.4px;
-    }
-    .value{
-      font-size: clamp(34px, 3.8vw, 54px);
-      font-weight: 900;
-      color: var(--teal2);
-      letter-spacing:.6px;
-      text-shadow: 0 0 22px rgba(0,255,208,.35);
-      line-height:1.05;
-      margin-top:12px;
-    }
-    .hint{
-      color: var(--muted2);
-      font-size: 12px;
-      margin-top: 6px;
-      font-family: var(--mono);
-    }
-
-    .chartCard{ grid-column: span 12; }
-    canvas{ width:100% !important; height: 360px !important; }
-    .chartTitle{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      margin:0 0 10px;
-      font-weight:900;
-      letter-spacing:.2px;
-      font-size: 14px;
-    }
-    .chartMeta{
-      color:var(--muted2);
-      font-family:var(--mono);
-      font-size:12px;
-      white-space:nowrap;
-    }
-
-    .split{
+    .kpis{
+      grid-column: span 12;
       display:grid;
-      grid-template-columns: 1.15fr .85fr;
-      gap: 14px;
-      margin-top: 14px;
+      grid-template-columns: repeat(12, 1fr);
+      gap:14px;
     }
-    .listTitle{
+
+    .kpi{
+      grid-column: span 12;
+      padding:18px;
+      border-radius: var(--r2);
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: var(--glow);
+      position:relative;
+      overflow:hidden;
+    }
+    .kpi::after{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(420px 180px at 20% 0%, rgba(20,184,166,.16), transparent 60%);
+      opacity:.7;
+      pointer-events:none;
+    }
+    .kpi .k-title{
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      color: rgba(255,255,255,.80);
+      font-size:13px;
+      margin-bottom:10px;
+    }
+    .badge{
+      font-family: var(--mono);
+      font-size:11px;
+      padding:4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(20,184,166,.22);
+      background: rgba(20,184,166,.10);
+      color: rgba(255,255,255,.85);
+    }
+    .kpi .k-value{
+      position:relative;
+      font-size:44px;
+      letter-spacing:.01em;
+      color: var(--teal2);
+      text-shadow: 0 0 28px rgba(0,255,208,.20);
+      font-weight:650;
+      line-height:1.05;
+    }
+    .kpi .k-foot{
+      position:relative;
+      margin-top:10px;
+      font-size:12px;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+
+    @media (min-width: 920px){
+      .kpi{ grid-column: span 4; }
+    }
+
+    .section-title{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
       margin:0 0 10px;
-      font-weight:900;
-      font-size:18px;
-      letter-spacing:.2px;
     }
-    .list{ display:flex; flex-direction:column; gap:10px; }
-    .row{
-      padding: 12px 14px;
+    .section-title h3{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color: rgba(255,255,255,.82);
+    }
+
+    /* Chart area */
+    .chart-wrap{
+      height: 320px;
+    }
+    canvas{ display:block; width:100% !important; height:100% !important; }
+
+    /* Tables */
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
       border-radius: 16px;
-      background: rgba(255,255,255,.045);
-      border:1px solid rgba(255,255,255,.08);
-      display:flex; justify-content:space-between; gap:12px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
     }
-    .row b{ font-size:13px; }
-    .row span{ color:var(--muted2); font-family: var(--mono); font-size:12px; }
+    thead th{
+      text-align:left;
+      font-size:12px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color: rgba(255,255,255,.70);
+      font-family: var(--mono);
+      padding:12px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.02);
+    }
+    tbody td{
+      padding:12px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      color: rgba(255,255,255,.86);
+      font-size:13px;
+    }
+    tbody tr:hover td{
+      background: rgba(20,184,166,.06);
+    }
+    tbody tr:last-child td{ border-bottom:none; }
 
-    .section{
-      display:none;
-      animation: fadeIn .18s ease-out;
-    }
-    .section.active{ display:block; }
-    @keyframes fadeIn{
-      from{opacity:.0; transform: translateY(4px)}
-      to{opacity:1; transform: translateY(0)}
-    }
+    .muted{ color: var(--muted); }
+    .right{ text-align:right; }
 
-    .settingsBlock{
+    .two-col{
+      grid-column: span 12;
       display:grid;
       grid-template-columns: 1fr;
-      gap:12px;
+      gap:14px;
     }
-    .kv{
-      display:flex;
-      justify-content:space-between;
-      gap:16px;
-      padding:12px 14px;
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.20);
-      font-family:var(--mono);
-      font-size:12px;
-      color: rgba(255,255,255,.78);
-      overflow:auto;
+    @media (min-width: 1024px){
+      .two-col{ grid-template-columns: 1.1fr .9fr; }
     }
 
-    @media (max-width: 1060px){
-      .app{ grid-template-columns: 1fr; }
-      .sidebar{ position:relative; height:auto; }
-      .sideFooter{ position:relative; left:auto; right:auto; bottom:auto; margin-top:14px; }
-      .main{ max-width:none; }
-      .kpi{ grid-column: span 12; }
-      canvas{ height: 320px !important; }
-      .split{ grid-template-columns: 1fr; }
+    .mini{
+      font-family: var(--mono);
+      font-size:12px;
+      color: var(--muted);
     }
+
+    /* Settings note (clean) */
+    .note{
+      padding:14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+    }
+    .note h4{
+      margin:0 0 8px;
+      font-size:13px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color: rgba(255,255,255,.80);
+    }
+    .note p{
+      margin:0;
+      color: var(--muted);
+      font-size:13px;
+      line-height:1.5;
+    }
+    .note a{
+      color: rgba(255,255,255,.90);
+      text-decoration:none;
+      border-bottom: 1px solid rgba(20,184,166,.35);
+    }
+    .note a:hover{
+      border-bottom-color: rgba(0,255,208,.65);
+    }
+
+    /* small loading shimmer */
+    .skeleton{
+      height:18px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(255,255,255,.06), rgba(255,255,255,.10), rgba(255,255,255,.06));
+      background-size: 220% 100%;
+      animation: sh 1.2s linear infinite;
+    }
+    @keyframes sh{ 0%{ background-position: 0% 0; } 100%{ background-position: 220% 0; } }
   </style>
 </head>
 
 <body>
-  <div class="app">
+  <div class="bg-grid"></div>
 
-    <!-- SIDEBAR -->
+  <div class="app">
     <aside class="sidebar">
       <div class="brand">
-        <div class="brandLeft">
-          <div class="brandName">PROFREELANCE OS</div>
-          <div class="brandSub"><span class="pulseDot"></span><span id="sideLiveText">LIVE</span></div>
-        </div>
-        <div class="brandSub" style="text-align:right">
-          <div style="font-weight:900; color:rgba(255,255,255,.86)">v1.0</div>
-          <div style="margin-top:2px">Control Panel</div>
+        <div class="dot"></div>
+        <div>
+          <h1>PROFREELANCE OS</h1>
+          <p class="mini">Control Panel</p>
         </div>
       </div>
 
-      <nav class="nav" aria-label="Navigation">
-        <button class="navBtn active" data-view="overview">
-          <span class="glassIcon" aria-hidden="true">
-            <!-- Glass icon: Orbit -->
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M12 2c3.5 0 6.5 2.2 7.7 5.3" stroke="rgba(255,255,255,.9)" stroke-width="1.6" stroke-linecap="round"/>
-              <path d="M21 12c0 5-4 9-9 9" stroke="rgba(255,255,255,.75)" stroke-width="1.6" stroke-linecap="round"/>
-              <path d="M12 21c-5 0-9-4-9-9" stroke="rgba(255,255,255,.65)" stroke-width="1.6" stroke-linecap="round"/>
-              <path d="M3.6 7.2C5.2 4.2 8.3 2 12 2" stroke="rgba(255,255,255,.8)" stroke-width="1.6" stroke-linecap="round"/>
-              <circle cx="12" cy="12" r="2.6" stroke="rgba(0,255,208,.9)" stroke-width="1.6"/>
-            </svg>
-          </span>
-          <span class="navText">
-            <span class="navTitle">Overview</span>
-            <span class="navHint">Mission control</span>
-          </span>
-        </button>
-
-        <button class="navBtn" data-view="revenue">
-          <span class="glassIcon" aria-hidden="true">
-            <!-- Glass icon: Credit -->
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <rect x="3" y="6" width="18" height="12" rx="3" stroke="rgba(255,255,255,.85)" stroke-width="1.6"/>
-              <path d="M6 10h12" stroke="rgba(0,255,208,.85)" stroke-width="1.6" stroke-linecap="round"/>
-              <path d="M7 15h5" stroke="rgba(255,255,255,.7)" stroke-width="1.6" stroke-linecap="round"/>
-            </svg>
-          </span>
-          <span class="navText">
-            <span class="navTitle">Revenue</span>
-            <span class="navHint">Cashflow engine</span>
-          </span>
-        </button>
-
-        <button class="navBtn" data-view="pipeline">
-          <span class="glassIcon" aria-hidden="true">
-            <!-- Glass icon: Layers -->
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M12 3l9 5-9 5-9-5 9-5z" stroke="rgba(0,255,208,.85)" stroke-width="1.6" stroke-linejoin="round"/>
-              <path d="M21 12l-9 5-9-5" stroke="rgba(255,255,255,.75)" stroke-width="1.6" stroke-linejoin="round"/>
-              <path d="M21 17l-9 5-9-5" stroke="rgba(255,255,255,.6)" stroke-width="1.6" stroke-linejoin="round"/>
-            </svg>
-          </span>
-          <span class="navText">
-            <span class="navTitle">Pipeline</span>
-            <span class="navHint">Future revenue</span>
-          </span>
-        </button>
-
-        <button class="navBtn" data-view="activity">
-          <span class="glassIcon" aria-hidden="true">
-            <!-- Glass icon: Activity -->
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M4 12h4l2-6 4 12 2-6h4" stroke="rgba(0,255,208,.85)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M4 18h16" stroke="rgba(255,255,255,.55)" stroke-width="1.6" stroke-linecap="round"/>
-            </svg>
-          </span>
-          <span class="navText">
-            <span class="navTitle">Activity</span>
-            <span class="navHint">Ops pulse</span>
-          </span>
-        </button>
-
-        <button class="navBtn" data-view="settings">
-          <span class="glassIcon" aria-hidden="true">
-            <!-- Glass icon: Gear -->
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" stroke="rgba(0,255,208,.85)" stroke-width="1.6"/>
-              <path d="M19.4 15a8 8 0 0 0 .1-2l2-1.2-2-3.4-2.3.6a7.7 7.7 0 0 0-1.7-1L15 5h-6l-.5 2.9a7.7 7.7 0 0 0-1.7 1L4.5 8.4l-2 3.4L4.5 13a8 8 0 0 0 .1 2L2.5 16.2l2 3.4 2.3-.6c.5.4 1.1.7 1.7 1L9 22h6l.5-2.9c.6-.3 1.2-.6 1.7-1l2.3.6 2-3.4L19.4 15z"
-                    stroke="rgba(255,255,255,.6)" stroke-width="1.2" stroke-linejoin="round"/>
-            </svg>
-          </span>
-          <span class="navText">
-            <span class="navTitle">Settings</span>
-            <span class="navHint">Template wiring</span>
-          </span>
-        </button>
+      <nav class="nav" id="nav">
+        <a href="#overview" class="active"><span>Overview</span><span class="pill">KPIs</span></a>
+        <a href="#signal"><span>Signal</span><span class="pill">Chart</span></a>
+        <a href="#pipeline"><span>Pipeline</span><span class="pill">Table</span></a>
+        <a href="#activity"><span>Activity</span><span class="pill">Feed</span></a>
+        <a href="#revenue"><span>Revenue</span><span class="pill">Invoices</span></a>
+        <a href="#settings"><span>Settings</span><span class="pill">Info</span></a>
       </nav>
 
-      <div class="sideFooter">
-        <div class="statusRow">
-          <div class="statusLabel">
-            <b id="statusTitle">CONNECTING</b>
-            <span id="statusTime">—</span>
+      <div class="sidebar-footer">
+        <div class="row">
+          <div class="status">
+            <span class="led" id="led"></span>
+            <span id="statusText">Loading…</span>
           </div>
-          <div class="statusPill" id="statusPill">—</div>
+          <div class="mini" id="lastSync">—</div>
         </div>
       </div>
     </aside>
 
-    <!-- MAIN -->
     <main class="main">
       <div class="topbar">
-        <div>
-          <h1 class="h1" id="pageTitle">Overview</h1>
-          <div class="sub" id="pageSub">
-            Real-time dashboard powered by your published Google Sheet. Zero subscriptions. All signal, no noise.
-          </div>
+        <div class="title">
+          <h2>PROFREELANCE OS</h2>
+          <div class="sub" id="subline">Live dashboard</div>
         </div>
-        <div class="actions">
-          <button class="btn btnPrimary" id="refreshBtn">REFRESH NOW</button>
-          <button class="btn" id="copyHealthBtn">COPY HEALTH</button>
+
+        <div class="top-widgets">
+          <div class="chip">
+            <span class="muted">Refresh</span>
+            <b id="refreshRate">60s</b>
+          </div>
+          <div class="chip">
+            <span class="muted">Local time</span>
+            <span class="clock" id="clock">—</span>
+          </div>
         </div>
       </div>
 
-      <div class="content">
-        <!-- OVERVIEW -->
-        <section class="section active" id="view-overview">
-          <div class="grid">
-            <div class="card kpi">
-              <div class="cardInner">
-                <div class="kpiTop">
-                  <div class="label">Revenue</div>
-                  <div class="chip">ZAR</div>
-                </div>
-                <div class="value" id="kpiRevenue">—</div>
-                <div class="hint" id="kpiRevenueHint">Metrics → Revenue</div>
-              </div>
-            </div>
+      <!-- KPIs -->
+      <section id="overview" class="kpis">
+        <div class="kpi">
+          <div class="k-title"><span>Revenue</span><span class="badge">ZAR</span></div>
+          <div class="k-value" id="kpiRevenue"><div class="skeleton"></div></div>
+          <div class="k-foot" id="kpiRevenueFoot">—</div>
+        </div>
 
-            <div class="card kpi">
-              <div class="cardInner">
-                <div class="kpiTop">
-                  <div class="label">Active Clients</div>
-                  <div class="chip">LIVE</div>
-                </div>
-                <div class="value" id="kpiClients">—</div>
-                <div class="hint" id="kpiClientsHint">Metrics → Active Clients</div>
-              </div>
-            </div>
+        <div class="kpi">
+          <div class="k-title"><span>Active Clients</span><span class="badge">LIVE</span></div>
+          <div class="k-value" id="kpiClients"><div class="skeleton"></div></div>
+          <div class="k-foot" id="kpiClientsFoot">—</div>
+        </div>
 
-            <div class="card kpi">
-              <div class="cardInner">
-                <div class="kpiTop">
-                  <div class="label">Pipeline Value</div>
-                  <div class="chip">ZAR</div>
-                </div>
-                <div class="value" id="kpiPipeline">—</div>
-                <div class="hint" id="kpiPipelineHint">Metrics → Pipeline Value</div>
-              </div>
-            </div>
+        <div class="kpi">
+          <div class="k-title"><span>Pipeline Value</span><span class="badge">ZAR</span></div>
+          <div class="k-value" id="kpiPipeline"><div class="skeleton"></div></div>
+          <div class="k-foot" id="kpiPipelineFoot">—</div>
+        </div>
+      </section>
 
-            <div class="card chartCard">
-              <div class="cardInner">
-                <div class="chartTitle">
-                  <span>Signal</span>
-                  <span class="chartMeta" id="chartMeta">Waiting for data…</span>
-                </div>
-                <canvas id="signalChart"></canvas>
-              </div>
+      <div class="grid">
+        <!-- Signal -->
+        <section id="signal" class="card">
+          <div class="card-inner">
+            <div class="section-title">
+              <h3>Signal</h3>
+              <div class="mini" id="signalMeta">—</div>
             </div>
-          </div>
-
-          <div class="split">
-            <div class="card">
-              <div class="cardInner">
-                <h3 class="listTitle">Pipeline</h3>
-                <div class="list" id="pipelineList">
-                  <div class="row"><b>Waiting…</b><span>—</span></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="cardInner">
-                <h3 class="listTitle">Activity</h3>
-                <div class="list" id="activityList">
-                  <div class="row"><b>Waiting…</b><span>—</span></div>
-                </div>
-              </div>
+            <div class="chart-wrap">
+              <canvas id="signalChart"></canvas>
             </div>
           </div>
         </section>
 
-        <!-- REVENUE -->
-        <section class="section" id="view-revenue">
-          <div class="grid">
-            <div class="card chartCard">
-              <div class="cardInner">
-                <div class="chartTitle">
-                  <span>Revenue Stream (from Revenue sheet)</span>
-                  <span class="chartMeta" id="revMeta">—</span>
-                </div>
-                <div class="list" id="revenueList"></div>
+        <div class="two-col">
+          <!-- Pipeline -->
+          <section id="pipeline" class="card">
+            <div class="card-inner">
+              <div class="section-title">
+                <h3>Pipeline</h3>
+                <div class="mini" id="pipelineMeta">—</div>
               </div>
+              <div style="overflow:auto; border-radius:16px;">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Client</th>
+                      <th class="right">Deal Value</th>
+                      <th>Stage</th>
+                      <th class="right">Prob.</th>
+                      <th class="right">Weighted</th>
+                      <th>Expected Close</th>
+                    </tr>
+                  </thead>
+                  <tbody id="pipelineBody">
+                    <tr><td colspan="6"><div class="skeleton"></div></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- Activity -->
+          <section id="activity" class="card">
+            <div class="card-inner">
+              <div class="section-title">
+                <h3>Activity</h3>
+                <div class="mini" id="activityMeta">—</div>
+              </div>
+              <div style="overflow:auto; border-radius:16px;">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Client</th>
+                      <th>Event</th>
+                      <th>Type</th>
+                      <th>Owner</th>
+                      <th>Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody id="activityBody">
+                    <tr><td colspan="6"><div class="skeleton"></div></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Revenue -->
+        <section id="revenue" class="card">
+          <div class="card-inner">
+            <div class="section-title">
+              <h3>Revenue</h3>
+              <div class="mini" id="revenueMeta">—</div>
+            </div>
+            <div style="overflow:auto; border-radius:16px;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Client</th>
+                    <th class="right">Amount</th>
+                    <th>Status</th>
+                    <th>Invoice #</th>
+                    <th>Paid Date</th>
+                  </tr>
+                </thead>
+                <tbody id="revenueBody">
+                  <tr><td colspan="6"><div class="skeleton"></div></td></tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </section>
 
-        <!-- PIPELINE -->
-        <section class="section" id="view-pipeline">
-          <div class="grid">
-            <div class="card chartCard">
-              <div class="cardInner">
-                <div class="chartTitle">
-                  <span>Pipeline Deals (from Pipeline sheet)</span>
-                  <span class="chartMeta" id="pipeMeta">—</span>
-                </div>
-                <div class="list" id="pipelineFullList"></div>
-              </div>
+        <!-- Settings -->
+        <section id="settings" class="card">
+          <div class="card-inner">
+            <div class="section-title">
+              <h3>Settings</h3>
+              <div class="mini">Build: static + free tooling</div>
+            </div>
+
+            <div class="note">
+              <h4>From Profreelance</h4>
+              <p>
+                Built to showcase automation + ops visibility.
+                Visit: <a href="https://www.profreelance.co.za/" target="_blank" rel="noopener noreferrer">profreelance.co.za</a>
+              </p>
             </div>
           </div>
         </section>
-
-        <!-- ACTIVITY -->
-        <section class="section" id="view-activity">
-          <div class="grid">
-            <div class="card chartCard">
-              <div class="cardInner">
-                <div class="chartTitle">
-                  <span>Activity Log (from Activity sheet)</span>
-                  <span class="chartMeta" id="actMeta">—</span>
-                </div>
-                <div class="list" id="activityFullList"></div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- SETTINGS -->
-        <section class="section" id="view-settings">
-          <div class="grid">
-            <div class="card chartCard">
-              <div class="cardInner">
-                <div class="chartTitle">
-                  <span>Template Wiring</span>
-                  <span class="chartMeta">These are the 4 published CSV endpoints used by the OS.</span>
-                </div>
-                <div class="settingsBlock">
-                  <div class="kv"><span>METRICS</span><span id="urlMetrics"></span></div>
-                  <div class="kv"><span>SIGNAL</span><span id="urlSignal"></span></div>
-                  <div class="kv"><span>PIPELINE</span><span id="urlPipeline"></span></div>
-                  <div class="kv"><span>ACTIVITY</span><span id="urlActivity"></span></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="card chartCard">
-              <div class="cardInner">
-                <div class="chartTitle">
-                  <span>Profreelance Note</span>
-                  <span class="chartMeta">Drop this into your Notion template footer.</span>
-                </div>
-                <div style="color:rgba(255,255,255,.78); line-height:1.5">
-                  <b style="color:rgba(255,255,255,.92)">Thanks for installing Profreelance OS.</b><br>
-                  We built this to turn freelance chaos into calm systems: clearer pipeline, cleaner revenue visibility, and a weekly operating rhythm that actually sticks.<br><br>
-                  <span style="color:rgba(255,255,255,.62)">
-                    Need help customising your OS or automating your workflows?
-                    Reach us anytime:
-                    <b>profreelance.co.za</b> · <b>LinkedIn</b> · <b>Instagram</b> · <b>Email</b>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
       </div>
     </main>
   </div>
 
-<script>
-  const CSV = {
-    METRICS:  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQPgSVSxvqDb3ZT4xfOdWvS7L2femGi-QM_S7yG72TkFYj7RTvRcRIakEnnpfgOXEStak3Q72Q0YBGB/pub?gid=44313312&single=true&output=csv",
-    SIGNAL:   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQPgSVSxvqDb3ZT4xfOdWvS7L2femGi-QM_S7yG72TkFYj7RTvRcRIakEnnpfgOXEStak3Q72Q0YBGB/pub?gid=584175548&single=true&output=csv",
-    PIPELINE: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQPgSVSxvqDb3ZT4xfOdWvS7L2femGi-QM_S7yG72TkFYj7RTvRcRIakEnnpfgOXEStak3Q72Q0YBGB/pub?gid=182871929&single=true&output=csv",
-    ACTIVITY: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQPgSVSxvqDb3ZT4xfOdWvS7L2femGi-QM_S7yG72TkFYj7RTvRcRIakEnnpfgOXEStak3Q72Q0YBGB/pub?gid=64013084&single=true&output=csv"
-  };
+  <script>
+    // ====== DATA SOURCES (your published CSV links) ======
+    const CSV = {
+      metrics:  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQPgSVSxvqDb3ZT4xfOdWvS7L2femGi-QM_S7yG72TkFYj7RTvRcRIakEnnpfgOXEStak3Q72Q0YBGB/pub?gid=44313312&single=true&output=csv",
+      signal:   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQPgSVSxvqDb3ZT4xfOdWvS7L2femGi-QM_S7yG72TkFYj7RTvRcRIakEnnpfgOXEStak3Q72Q0YBGB/pub?gid=584175548&single=true&output=csv",
+      pipeline: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQPgSVSxvqDb3ZT4xfOdWvS7L2femGi-QM_S7yG72TkFYj7RTvRcRIakEnnpfgOXEStak3Q72Q0YBGB/pub?gid=182871929&single=true&output=csv",
+      activity: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQPgSVSxvqDb3ZT4xfOdWvS7L2femGi-QM_S7yG72TkFYj7RTvRcRIakEnnpfgOXEStak3Q72Q0YBGB/pub?gid=64013084&single=true&output=csv"
+    };
 
-  // Optional: Revenue sheet. If you publish it later, paste URL here. (Dashboard still works without it.)
-  // const CSV_REVENUE = "PASTE_REVENUE_CSV_HERE";
+    // ====== REFRESH SETTINGS ======
+    const REFRESH_MS = 60000;          // 60s
+    const MAX_FAILS_FOR_ERROR = 3;     // only show "Error" after consecutive failures
+    const CACHE_BUST = true;
 
-  // Refresh cadence (safe for Google publish endpoints)
-  const REFRESH_MS = 60000; // 60s
+    // ====== DOM helpers ======
+    const el = (id) => document.getElementById(id);
+    const led = el("led");
+    const statusText = el("statusText");
+    const lastSync = el("lastSync");
+    const refreshRate = el("refreshRate");
 
-  const el = (id) => document.getElementById(id);
+    refreshRate.textContent = Math.round(REFRESH_MS/1000) + "s";
 
-  // Show URLs in Settings
-  el("urlMetrics").textContent = CSV.METRICS;
-  el("urlSignal").textContent = CSV.SIGNAL;
-  el("urlPipeline").textContent = CSV.PIPELINE;
-  el("urlActivity").textContent = CSV.ACTIVITY;
+    // ====== Formatting ======
+    const fmtZar = (n) => {
+      if (n === null || n === undefined || n === "" || isNaN(Number(n))) return "—";
+      return "R" + Number(n).toLocaleString("en-ZA", { maximumFractionDigits: 0 });
+    };
+    const fmtInt = (n) => {
+      if (n === null || n === undefined || n === "" || isNaN(Number(n))) return "—";
+      return Number(n).toLocaleString("en-ZA", { maximumFractionDigits: 0 });
+    };
 
-  // ---- CSV parsing (handles quoted commas, and "1,200,000" formatting) ----
-  function parseCSV(text){
-    const rows = [];
-    let row = [], cell = "", inQuotes = false;
-    for(let i=0;i<text.length;i++){
-      const c = text[i];
-      const next = text[i+1];
-      if(c === '"' && inQuotes && next === '"'){ cell += '"'; i++; continue; }
-      if(c === '"'){ inQuotes = !inQuotes; continue; }
-      if(c === "," && !inQuotes){ row.push(cell); cell=""; continue; }
-      if((c === "\n" || c === "\r") && !inQuotes){
-        if(c === "\r" && next === "\n") i++;
-        row.push(cell); cell="";
-        if(row.some(v => String(v).trim() !== "")) rows.push(row);
-        row = [];
-        continue;
+    const safeText = (v) => (v ?? "").toString();
+
+    // ====== Robust CSV parser (handles commas + quotes) ======
+    function parseCSV(text){
+      const rows = [];
+      let row = [];
+      let field = "";
+      let inQuotes = false;
+
+      for (let i=0; i<text.length; i++){
+        const c = text[i];
+        const next = text[i+1];
+
+        if (c === '"' && inQuotes && next === '"'){
+          field += '"'; i++; continue;
+        }
+        if (c === '"'){
+          inQuotes = !inQuotes;
+          continue;
+        }
+        if (c === ',' && !inQuotes){
+          row.push(field); field = "";
+          continue;
+        }
+        if ((c === '\n' || c === '\r') && !inQuotes){
+          if (c === '\r' && next === '\n') i++;
+          row.push(field); field = "";
+          // ignore empty trailing lines
+          if (row.some(x => x !== "")){
+            rows.push(row);
+          }
+          row = [];
+          continue;
+        }
+        field += c;
       }
-      cell += c;
+      // last field
+      row.push(field);
+      if (row.some(x => x !== "")) rows.push(row);
+
+      if (!rows.length) return { headers: [], data: [] };
+
+      const headers = rows[0].map(h => h.trim());
+      const data = rows.slice(1).map(r => {
+        const obj = {};
+        headers.forEach((h, idx) => obj[h] = (r[idx] ?? "").trim());
+        return obj;
+      });
+      return { headers, data };
     }
-    row.push(cell);
-    if(row.some(v => String(v).trim() !== "")) rows.push(row);
-    return rows;
-  }
 
-  function toNumber(v){
-    if(v === null || v === undefined) return NaN;
-    // Strip currency symbols, spaces, commas etc.
-    const s = String(v).replace(/[^\d.-]/g,"");
-    return Number(s);
-  }
-
-  function fmtZAR(n){
-    if(!isFinite(n)) return "—";
-    // SA grouping okay for display (not for CSV)
-    return "R" + Math.round(n).toLocaleString("en-ZA");
-  }
-
-  function escapeHtml(s){
-    return String(s ?? "")
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;");
-  }
-
-  async function fetchCSV(url){
-    // cache-buster keeps it stable if Google/CDN caches a stale response
-    const u = url + (url.includes("?") ? "&" : "?") + "t=" + Date.now();
-    const res = await fetch(u, { cache: "no-store" });
-    if(!res.ok) throw new Error("HTTP " + res.status);
-    return await res.text();
-  }
-
-  function rowsToObjects(rows){
-    const headers = (rows[0] || []).map(h => String(h || "").trim());
-    const data = rows.slice(1).map(r => {
-      const obj = {};
-      headers.forEach((h, i) => obj[h] = (r[i] ?? "").trim());
-      return obj;
-    });
-    return { headers, data };
-  }
-
-  // ---- Status handling (no more panic flipping) ----
-  const health = {
-    lastGood: null,
-    lastRefresh: null,
-    okCount: 0,
-    total: 4,
-    errors: {}
-  };
-
-  function setStatus(mode, message){
-    // mode: ok | partial | err | loading
-    el("statusTitle").textContent = (message || "STATUS").toUpperCase();
-    el("statusTime").textContent = new Date().toLocaleString();
-    el("sideLiveText").textContent = mode === "ok" ? "LIVE" : (mode === "partial" ? "DEGRADED" : (mode === "err" ? "OFFLINE" : "SYNCING"));
-
-    const pill = el("statusPill");
-    pill.classList.remove("pillOk","pillWarn","pillErr");
-    if(mode === "ok"){
-      pill.classList.add("pillOk");
-      pill.textContent = "CONNECTED";
-    } else if(mode === "partial"){
-      pill.classList.add("pillWarn");
-      pill.textContent = `PARTIAL (${health.okCount}/${health.total})`;
-    } else if(mode === "err"){
-      pill.classList.add("pillErr");
-      pill.textContent = "ERROR";
-    } else {
-      pill.textContent = "CONNECTING";
+    async function fetchCSV(url){
+      const u = CACHE_BUST ? (url + (url.includes("?") ? "&" : "?") + "t=" + Date.now()) : url;
+      const res = await fetch(u, { cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const text = await res.text();
+      return parseCSV(text);
     }
-  }
 
-  // ---- Chart ----
-  let chart;
-  function buildChart(labels, revenue, pipeline, clients){
-    const ctx = el("signalChart");
-    const common = { borderWidth: 2, tension: 0.35, pointRadius: 2.5, pointHoverRadius: 4 };
+    // ====== Connection state ======
+    let lastOkAt = 0;
+    let consecutiveFails = 0;
 
-    const datasets = [
-      { label:"Revenue (ZAR)",  data: revenue,  borderColor:"#14b8a6", ...common },
-      { label:"Pipeline (ZAR)", data: pipeline, borderColor:"#00ffd0", ...common },
-      { label:"Clients",        data: clients,  borderColor:"#7cf7ff", ...common, yAxisID:"y2" },
-    ];
+    function setStatus(state, detail){
+      led.className = "led " + state;
+      if (state === "connected") statusText.textContent = "Connected";
+      if (state === "degraded") statusText.textContent = "Degraded";
+      if (state === "error") statusText.textContent = "Error";
+      if (detail) statusText.textContent += " · " + detail;
+    }
 
-    if(chart) chart.destroy();
-    chart = new Chart(ctx, {
-      type:"line",
-      data:{ labels, datasets },
-      options:{
-        responsive:true,
-        maintainAspectRatio:false,
-        plugins:{
-          legend:{
-            labels:{ color:"rgba(255,255,255,.7)", boxWidth:26, boxHeight:10, padding:18 }
+    function touchLastSync(){
+      const d = new Date();
+      lastSync.textContent = d.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"}) ;
+    }
+
+    // ====== Chart ======
+    let signalChart;
+
+    function buildOrUpdateSignalChart(labels, revenue, pipeline, clients){
+      const ctx = el("signalChart");
+
+      const common = {
+        tension: 0.35,
+        pointRadius: 3,
+        pointHoverRadius: 4,
+        borderWidth: 2
+      };
+
+      const data = {
+        labels,
+        datasets: [
+          {
+            label: "Revenue (ZAR)",
+            data: revenue,
+            ...common,
+            borderColor: "#14b8a6",
+            pointBorderColor: "#14b8a6",
+            pointBackgroundColor: "#05070f"
           },
-          tooltip:{
-            backgroundColor:"rgba(10,12,22,.92)",
-            borderColor:"rgba(255,255,255,.12)",
-            borderWidth:1,
-            titleColor:"rgba(255,255,255,.92)",
-            bodyColor:"rgba(255,255,255,.8)",
-            callbacks:{
-              label:(ctx)=>{
-                const label = ctx.dataset.label || "";
-                const v = ctx.parsed.y;
-                if(label.includes("ZAR")) return `${label}: ${fmtZAR(v)}`;
-                return `${label}: ${v}`;
-              }
-            }
+          {
+            label: "Pipeline (ZAR)",
+            data: pipeline,
+            ...common,
+            borderColor: "#00ffd0",
+            pointBorderColor: "#00ffd0",
+            pointBackgroundColor: "#05070f"
+          },
+          {
+            label: "Clients",
+            data: clients,
+            ...common,
+            borderColor: "rgba(255,255,255,.65)",
+            pointBorderColor: "rgba(255,255,255,.65)",
+            pointBackgroundColor: "#05070f",
+            yAxisID: "y2"
+          }
+        ]
+      };
+
+      const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: {
+            labels: { color: "rgba(255,255,255,.72)" }
+          },
+          tooltip: {
+            backgroundColor: "rgba(10,12,22,.92)",
+            borderColor: "rgba(255,255,255,.14)",
+            borderWidth: 1,
+            titleColor: "rgba(255,255,255,.92)",
+            bodyColor: "rgba(255,255,255,.86)"
           }
         },
-        scales:{
-          x:{ ticks:{ color:"rgba(255,255,255,.45)", maxRotation:0, autoSkip:true }, grid:{ color:"rgba(255,255,255,.06)" } },
-          y:{ ticks:{ color:"rgba(255,255,255,.45)", callback:(v)=>fmtZAR(v) }, grid:{ color:"rgba(255,255,255,.06)" } },
-          y2:{ position:"right", ticks:{ color:"rgba(255,255,255,.35)" }, grid:{ drawOnChartArea:false } }
+        scales: {
+          x: {
+            ticks: { color: "rgba(255,255,255,.50)", maxRotation: 0 },
+            grid: { color: "rgba(255,255,255,.05)" }
+          },
+          y: {
+            ticks: {
+              color: "rgba(255,255,255,.50)",
+              callback: (v) => Number(v).toLocaleString("en-ZA")
+            },
+            grid: { color: "rgba(255,255,255,.05)" }
+          },
+          y2: {
+            position: "right",
+            ticks: { color: "rgba(255,255,255,.38)" },
+            grid: { drawOnChartArea: false }
+          }
         }
-      }
-    });
-  }
+      };
 
-  // ---- Renderers ----
-  function renderPipelinePreview(items){
-    const host = el("pipelineList");
-    host.innerHTML = "";
-    if(!items?.length){
-      host.innerHTML = `<div class="row"><b>No deals yet</b><span>Add rows in Pipeline sheet</span></div>`;
-      return;
-    }
-    const sorted = [...items].map(it => ({
-      client: it["Client"] || it["Client Name"] || it["client"] || "Client",
-      value: toNumber(it["Deal Value"] ?? it["Value"] ?? it["Amount"]),
-      stage: it["Stage"] || it["Status"] || ""
-    })).sort((a,b)=> (b.value||0)-(a.value||0));
-
-    sorted.slice(0,6).forEach(d=>{
-      const right = d.stage ? `${fmtZAR(d.value)} · ${escapeHtml(d.stage)}` : fmtZAR(d.value);
-      host.innerHTML += `<div class="row"><b>${escapeHtml(d.client)}</b><span>${right}</span></div>`;
-    });
-  }
-
-  function renderActivityPreview(items){
-    const host = el("activityList");
-    host.innerHTML = "";
-    if(!items?.length){
-      host.innerHTML = `<div class="row"><b>No activity yet</b><span>Add rows in Activity sheet</span></div>`;
-      return;
-    }
-    // latest first: try sort by Date if ISO, else just reverse
-    const copy = [...items].filter(x => Object.values(x).some(v => String(v||"").trim() !== ""));
-    copy.reverse();
-    copy.slice(0,6).forEach(it=>{
-      const date = it["Date"] || it["date"] || "";
-      const evt  = it["Event"] || it["event"] || it["Client"] || "Update";
-      const type = it["Type"] || it["type"] || "";
-      const right = type ? `${escapeHtml(date)} · ${escapeHtml(type)}` : escapeHtml(date);
-      host.innerHTML += `<div class="row"><b>${escapeHtml(evt)}</b><span>${right}</span></div>`;
-    });
-  }
-
-  function renderPipelineFull(items){
-    const host = el("pipelineFullList");
-    host.innerHTML = "";
-    if(!items?.length){
-      host.innerHTML = `<div class="row"><b>No deals yet</b><span>Add rows in Pipeline sheet</span></div>`;
-      el("pipeMeta").textContent = "0 rows";
-      return;
-    }
-    const sorted = [...items].map(it => ({
-      client: it["Client"] || it["Client Name"] || "Client",
-      value: toNumber(it["Deal Value"] ?? it["Value"] ?? it["Amount"]),
-      stage: it["Stage"] || "",
-      prob: it["Probability"] || ""
-    })).sort((a,b)=> (b.value||0)-(a.value||0));
-
-    el("pipeMeta").textContent = `${sorted.length} rows`;
-    sorted.forEach(d=>{
-      const right = `${fmtZAR(d.value)} · ${escapeHtml(d.stage || "—")} · p=${escapeHtml(String(d.prob || "—"))}`;
-      host.innerHTML += `<div class="row"><b>${escapeHtml(d.client)}</b><span>${right}</span></div>`;
-    });
-  }
-
-  function renderActivityFull(items){
-    const host = el("activityFullList");
-    host.innerHTML = "";
-    if(!items?.length){
-      host.innerHTML = `<div class="row"><b>No activity yet</b><span>Add rows in Activity sheet</span></div>`;
-      el("actMeta").textContent = "0 rows";
-      return;
-    }
-    const copy = [...items].reverse();
-    el("actMeta").textContent = `${items.length} rows`;
-    copy.forEach(it=>{
-      const date = it["Date"] || "";
-      const client = it["Client"] || "";
-      const evt = it["Event"] || "Update";
-      const type = it["Type"] || "";
-      const right = `${escapeHtml(date)} · ${escapeHtml(type || "—")} · ${escapeHtml(client || "—")}`;
-      host.innerHTML += `<div class="row"><b>${escapeHtml(evt)}</b><span>${right}</span></div>`;
-    });
-  }
-
-  function renderRevenueListPlaceholder(){
-    const host = el("revenueList");
-    host.innerHTML = `
-      <div class="row"><b>Revenue list not enabled</b><span>Optional: publish your Revenue tab as CSV later</span></div>
-      <div class="row"><b>Why optional?</b><span>Metrics + Signal already power the main experience</span></div>
-    `;
-    el("revMeta").textContent = "Using Metrics + Signal";
-  }
-
-  // ---- Navigation ----
-  const titles = {
-    overview: { title:"Overview", sub:"Real-time dashboard powered by your published Google Sheet. Zero subscriptions. All signal, no noise." },
-    revenue:  { title:"Revenue",  sub:"Cashflow visibility. Keep the engine honest." },
-    pipeline: { title:"Pipeline", sub:"Future revenue. Track, forecast, close." },
-    activity: { title:"Activity", sub:"Operational pulse. Every move leaves a trace." },
-    settings: { title:"Settings", sub:"Copy these endpoints into a duplicated template to wire it instantly." }
-  };
-
-  function showView(view){
-    document.querySelectorAll(".navBtn").forEach(b => b.classList.toggle("active", b.dataset.view === view));
-    document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
-    el("view-" + view).classList.add("active");
-    el("pageTitle").textContent = titles[view].title;
-    el("pageSub").textContent = titles[view].sub;
-  }
-
-  document.querySelectorAll(".navBtn").forEach(btn=>{
-    btn.addEventListener("click", ()=> showView(btn.dataset.view));
-  });
-
-  // ---- Main refresh loop (uses allSettled to avoid "flip to error") ----
-  async function refresh(){
-    setStatus("loading","Syncing");
-
-    const jobs = {
-      metrics: fetchCSV(CSV.METRICS),
-      signal: fetchCSV(CSV.SIGNAL),
-      pipeline: fetchCSV(CSV.PIPELINE),
-      activity: fetchCSV(CSV.ACTIVITY)
-    };
-
-    const keys = Object.keys(jobs);
-    const results = await Promise.allSettled(keys.map(k => jobs[k]));
-
-    // reset health
-    health.errors = {};
-    health.okCount = 0;
-    health.total = keys.length;
-
-    const data = {};
-
-    results.forEach((r, idx)=>{
-      const k = keys[idx];
-      if(r.status === "fulfilled"){
-        health.okCount++;
-        data[k] = r.value;
+      if (!signalChart){
+        signalChart = new Chart(ctx, { type: "line", data, options });
       } else {
-        health.errors[k] = String(r.reason || "fetch failed");
+        signalChart.data = data;
+        signalChart.update();
       }
-    });
-
-    // status mode
-    if(health.okCount === health.total){
-      setStatus("ok","Connected");
-    } else if(health.okCount >= 1){
-      setStatus("partial","Degraded");
-    } else {
-      setStatus("err","Offline");
     }
 
-    // Only update UI for datasets we successfully fetched.
-    // If a fetch fails, keep the last good values on screen.
-    try{
-      if(data.metrics){
-        const rows = parseCSV(data.metrics);
-        const { data: objs } = rowsToObjects(rows);
-        const map = {};
-        objs.forEach(o => {
-          const key = (o["Metric"] || o["metric"] || "").trim();
-          map[key] = o["Value"] ?? o["value"] ?? "";
-        });
+    // ====== Renderers ======
+    function renderMetrics(metrics){
+      // expecting headers: Metric, Value
+      const get = (name) => {
+        const row = metrics.data.find(r => (r["Metric"] || "").toLowerCase() === name.toLowerCase());
+        return row ? row["Value"] : "";
+      };
 
-        const rev = toNumber(map["Revenue"]);
-        const cli = toNumber(map["Active Clients"]);
-        const pip = toNumber(map["Pipeline Value"]);
+      const revenue = Number(get("Revenue"));
+      const clients = Number(get("Active Clients"));
+      const pipeline = Number(get("Pipeline Value"));
 
-        el("kpiRevenue").textContent = fmtZAR(rev);
-        el("kpiClients").textContent = isFinite(cli) ? String(Math.round(cli)) : "—";
-        el("kpiPipeline").textContent = fmtZAR(pip);
+      el("kpiRevenue").textContent = fmtZar(revenue);
+      el("kpiClients").textContent = fmtInt(clients);
+      el("kpiPipeline").textContent = fmtZar(pipeline);
+
+      const now = new Date().toLocaleString([], { year:"numeric", month:"short", day:"2-digit", hour:"2-digit", minute:"2-digit" });
+      el("kpiRevenueFoot").textContent = "Updated " + now;
+      el("kpiClientsFoot").textContent = "Updated " + now;
+      el("kpiPipelineFoot").textContent = "Updated " + now;
+    }
+
+    function renderSignal(signal){
+      // Date, Revenue (ZAR), Pipeline (ZAR), Clients
+      const labels = signal.data.map(r => r["Date"]).filter(Boolean);
+      const revenue = signal.data.map(r => Number((r["Revenue (ZAR)"] || "").replace(/,/g,"")) || 0);
+      const pipeline = signal.data.map(r => Number((r["Pipeline (ZAR)"] || "").replace(/,/g,"")) || 0);
+      const clients = signal.data.map(r => Number((r["Clients"] || "").replace(/,/g,"")) || 0);
+
+      buildOrUpdateSignalChart(labels, revenue, pipeline, clients);
+      el("signalMeta").textContent = labels.length ? (labels[0] + " → " + labels[labels.length-1]) : "—";
+    }
+
+    function renderPipeline(pipeline){
+      const body = el("pipelineBody");
+      body.innerHTML = "";
+
+      pipeline.data.forEach(r => {
+        const tr = document.createElement("tr");
+
+        const client = safeText(r["Client"]);
+        const deal = Number((r["Deal Value"] || "").replace(/,/g,""));
+        const stage = safeText(r["Stage"]);
+        const prob = Number((r["Probability"] || "").replace(/,/g,""));
+        const weighted = Number((r["Weighted Value"] || "").replace(/,/g,""));
+        const close = safeText(r["Expected Close"]);
+
+        tr.innerHTML = `
+          <td>${client || "—"}</td>
+          <td class="right">${isNaN(deal) ? "—" : fmtZar(deal)}</td>
+          <td class="muted">${stage || "—"}</td>
+          <td class="right">${isNaN(prob) ? "—" : prob.toFixed(2)}</td>
+          <td class="right">${isNaN(weighted) ? "—" : fmtZar(weighted)}</td>
+          <td class="muted">${close || "—"}</td>
+        `;
+        body.appendChild(tr);
+      });
+
+      el("pipelineMeta").textContent = pipeline.data.length ? (pipeline.data.length + " deal(s)") : "—";
+      if (!pipeline.data.length){
+        body.innerHTML = `<tr><td colspan="6" class="muted">No pipeline rows yet.</td></tr>`;
       }
+    }
 
-      if(data.signal){
-        const rows = parseCSV(data.signal);
-        const { headers, data: objs } = rowsToObjects(rows);
+    function renderActivity(activity){
+      const body = el("activityBody");
+      body.innerHTML = "";
 
-        // Expected headers from your sheet:
-        // Date | Revenue (ZAR) | Pipeline (ZAR) | Clients
-        const labels = [];
-        const revSeries = [];
-        const pipSeries = [];
-        const cliSeries = [];
+      activity.data.forEach(r => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="muted">${safeText(r["Date"]) || "—"}</td>
+          <td>${safeText(r["Client"]) || "—"}</td>
+          <td>${safeText(r["Event"]) || "—"}</td>
+          <td class="muted">${safeText(r["Type"]) || "—"}</td>
+          <td class="muted">${safeText(r["Owner"]) || "—"}</td>
+          <td class="muted">${safeText(r["Notes"]) || "—"}</td>
+        `;
+        body.appendChild(tr);
+      });
 
-        objs.forEach(o=>{
-          const date = o["Date"] || o["date"] || o["Day"] || o["DAY"] || "";
-          if(!date) return;
-          labels.push(date);
-          revSeries.push(toNumber(o["Revenue (ZAR)"] ?? o["Revenue"] ?? o["revenue"]));
-          pipSeries.push(toNumber(o["Pipeline (ZAR)"] ?? o["Pipeline"] ?? o["pipeline"]));
-          cliSeries.push(toNumber(o["Clients"] ?? o["Active Clients"] ?? o["clients"]));
-        });
+      el("activityMeta").textContent = activity.data.length ? (activity.data.length + " log(s)") : "—";
+      if (!activity.data.length){
+        body.innerHTML = `<tr><td colspan="6" class="muted">No activity rows yet.</td></tr>`;
+      }
+    }
 
-        if(labels.length >= 2){
-          buildChart(labels, revSeries, pipSeries, cliSeries);
-          el("chartMeta").textContent = `${labels.length} points · Signal`;
+    function renderRevenue(revenue){
+      // Date, Client, Amount, Status, Invoice #, Paid Date
+      const body = el("revenueBody");
+      body.innerHTML = "";
+
+      revenue.data.forEach(r => {
+        const tr = document.createElement("tr");
+        const amt = Number((r["Amount"] || "").replace(/,/g,""));
+        tr.innerHTML = `
+          <td class="muted">${safeText(r["Date"]) || "—"}</td>
+          <td>${safeText(r["Client"]) || "—"}</td>
+          <td class="right">${isNaN(amt) ? "—" : fmtZar(amt)}</td>
+          <td class="muted">${safeText(r["Status"]) || "—"}</td>
+          <td class="muted">${safeText(r["Invoice #"]) || "—"}</td>
+          <td class="muted">${safeText(r["Paid Date"]) || "—"}</td>
+        `;
+        body.appendChild(tr);
+      });
+
+      el("revenueMeta").textContent = revenue.data.length ? (revenue.data.length + " invoice(s)") : "—";
+      if (!revenue.data.length){
+        body.innerHTML = `<tr><td colspan="6" class="muted">No revenue rows yet.</td></tr>`;
+      }
+    }
+
+    // ====== Clock ======
+    function tickClock(){
+      const d = new Date();
+      el("clock").textContent = d.toLocaleTimeString([], { hour:"2-digit", minute:"2-digit", second:"2-digit" });
+    }
+    setInterval(tickClock, 1000);
+    tickClock();
+
+    // ====== Navigation active state (scroll spy) ======
+    const navLinks = Array.from(document.querySelectorAll("#nav a"));
+    const sections = navLinks.map(a => document.querySelector(a.getAttribute("href")));
+    function onScroll(){
+      const y = window.scrollY + 120;
+      let activeIdx = 0;
+      sections.forEach((sec, i) => {
+        if (sec && sec.offsetTop <= y) activeIdx = i;
+      });
+      navLinks.forEach((a, i) => a.classList.toggle("active", i === activeIdx));
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    // ====== Main refresh ======
+    async function refresh(){
+      try{
+        const [metrics, signal, pipeline, activity] = await Promise.all([
+          fetchCSV(CSV.metrics),
+          fetchCSV(CSV.signal),
+          fetchCSV(CSV.pipeline),
+          fetchCSV(CSV.activity),
+        ]);
+
+        // Render
+        renderMetrics(metrics);
+        renderSignal(signal);
+        renderPipeline(pipeline);
+        renderActivity(activity);
+
+        // Revenue table comes from the "Revenue" tab, but you didn't provide a separate published CSV for it.
+        // If your Revenue tab is already included in one of the published CSVs, this will be blank.
+        // We'll attempt to load revenue from the "Signal" sheet? No.
+        // Instead: try to load revenue by reusing activity CSV if the Revenue columns exist.
+        // Best: publish Revenue tab separately later. For now we keep it empty-safe.
+        renderRevenue({ data: [] });
+
+        // Connection state
+        consecutiveFails = 0;
+        lastOkAt = Date.now();
+        setStatus("connected");
+        touchLastSync();
+
+      } catch (e){
+        consecutiveFails += 1;
+
+        // If we had a recent success, show "Degraded" first (prevents the annoying flip)
+        const secondsSinceOk = lastOkAt ? (Date.now() - lastOkAt) / 1000 : Infinity;
+
+        if (consecutiveFails >= MAX_FAILS_FOR_ERROR && secondsSinceOk > (REFRESH_MS/1000)*2){
+          setStatus("error");
         } else {
-          // Don’t error. Just show a gentle message.
-          el("chartMeta").textContent = "Add at least 2 rows in Signal for the line chart.";
+          setStatus("degraded", "retrying");
         }
       }
 
-      if(data.pipeline){
-        const rows = parseCSV(data.pipeline);
-        const { data: objs } = rowsToObjects(rows);
-        renderPipelinePreview(objs);
-        renderPipelineFull(objs);
+      // Update subline with last success age (for trust)
+      if (lastOkAt){
+        const ageS = Math.floor((Date.now() - lastOkAt)/1000);
+        el("subline").textContent = "Live dashboard · last good sync " + ageS + "s ago";
       }
-
-      if(data.activity){
-        const rows = parseCSV(data.activity);
-        const { data: objs } = rowsToObjects(rows);
-        renderActivityPreview(objs);
-        renderActivityFull(objs);
-      }
-
-      // Revenue view placeholder (optional)
-      renderRevenueListPlaceholder();
-
-      health.lastGood = new Date().toISOString();
-      health.lastRefresh = new Date().toISOString();
-
-    } catch (e){
-      // If parsing fails, keep last good UI and show degraded.
-      health.errors.parse = String(e);
-      if(health.okCount >= 1) setStatus("partial","Parse issue");
-      else setStatus("err","Parse failed");
     }
-  }
 
-  // Buttons
-  el("refreshBtn").addEventListener("click", refresh);
-  el("copyHealthBtn").addEventListener("click", async ()=>{
-    const payload = {
-      okCount: health.okCount,
-      total: health.total,
-      lastGood: health.lastGood,
-      lastRefresh: health.lastRefresh,
-      errors: health.errors
-    };
-    try{
-      await navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
-      alert("Copied health report to clipboard.");
-    } catch {
-      alert("Could not copy. Your browser blocked clipboard access.");
-    }
-  });
-
-  // Start
-  refresh();
-  setInterval(refresh, REFRESH_MS);
-
-  // Default view
-  showView("overview");
-</script>
+    // First paint
+    setStatus("degraded", "booting");
+    refresh();
+    setInterval(refresh, REFRESH_MS);
+  </script>
 </body>
 </html>
