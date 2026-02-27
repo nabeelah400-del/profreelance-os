@@ -1,286 +1,335 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PROFREELANCE OS</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PROFREELANCE OS CONTROL PANEL</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <style>
-    :root{
-      --bg:#05070f;
-      --card:rgba(255,255,255,0.05);
-      --stroke:rgba(255,255,255,0.08);
-      --glow:rgba(0,255,208,0.18);
-      --teal:#00ffd0;
-      --muted:rgba(255,255,255,0.55);
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      background:radial-gradient(1200px 700px at 20% 10%, rgba(0,255,208,0.08), transparent 55%),
-                 radial-gradient(900px 600px at 80% 20%, rgba(0,140,255,0.08), transparent 55%),
-                 var(--bg);
-      color:white;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-      padding:40px;
-    }
-    header{
-      display:flex; align-items:flex-end; justify-content:space-between;
-      gap:16px; margin-bottom:18px;
-    }
-    h1{margin:0; font-size:44px; letter-spacing:0.5px}
-    .sub{color:var(--muted); margin-top:6px}
-    .badge{
-      display:flex; gap:10px; align-items:center;
-      padding:10px 14px; border-radius:999px;
-      border:1px solid var(--stroke);
-      background:rgba(255,255,255,0.03);
-      backdrop-filter: blur(10px);
-      font-size:14px; color:rgba(255,255,255,0.75);
-    }
-    .dot{width:10px;height:10px;border-radius:999px;background:var(--teal); box-shadow:0 0 18px var(--teal)}
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(240px, 1fr));
-      gap:18px;
-      margin-top:16px;
-    }
-    .panel{
-      background:var(--card);
-      border:1px solid var(--stroke);
-      padding:22px;
-      border-radius:22px;
-      box-shadow:0 0 28px var(--glow);
-      backdrop-filter: blur(12px);
-      min-height:124px;
-    }
-    .label{color:rgba(255,255,255,0.7); font-size:14px; display:flex; justify-content:space-between; gap:12px}
-    .pill{
-      font-size:12px; padding:4px 10px; border-radius:999px;
-      border:1px solid var(--stroke); color:rgba(255,255,255,0.7);
-      background:rgba(255,255,255,0.03);
-    }
-    .metric{
-      margin-top:10px;
-      font-size:56px;
-      color:var(--teal);
-      letter-spacing:1px;
-      text-shadow:0 0 18px rgba(0,255,208,0.35);
-    }
-    .note{margin-top:8px; color:rgba(255,255,255,0.45); font-size:12px}
-    .chartWrap{
-      margin-top:18px;
-      background:rgba(255,255,255,0.03);
-      border:1px solid var(--stroke);
-      border-radius:22px;
-      padding:18px 18px 10px 18px;
-      box-shadow:0 0 28px rgba(0,255,208,0.10);
-      backdrop-filter: blur(12px);
-    }
-    .chartTitle{font-size:18px; color:rgba(255,255,255,0.85); margin:0 0 8px 0}
-    canvas{width:100% !important; height:320px !important;}
-    @media(max-width:980px){ .grid{grid-template-columns:1fr} h1{font-size:36px} }
-  </style>
+<style>
+
+:root{
+
+--bg:#05070f;
+--card:rgba(255,255,255,0.06);
+--stroke:rgba(255,255,255,0.1);
+--teal:#14b8a6;
+
+}
+
+body{
+
+margin:0;
+padding:40px;
+background:var(--bg);
+color:white;
+font-family:system-ui;
+
+}
+
+h1{
+
+font-size:48px;
+margin-bottom:10px;
+
+}
+
+.status{
+
+float:right;
+margin-top:-60px;
+background:rgba(255,255,255,0.05);
+padding:10px 20px;
+border-radius:30px;
+
+}
+
+.grid{
+
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:20px;
+margin-top:40px;
+
+}
+
+.card{
+
+background:var(--card);
+padding:25px;
+border-radius:20px;
+border:1px solid var(--stroke);
+
+}
+
+.metric{
+
+font-size:48px;
+color:var(--teal);
+
+}
+
+canvas{
+
+margin-top:40px;
+
+}
+
+.list{
+
+margin-top:20px;
+
+}
+
+.item{
+
+background:var(--card);
+padding:15px;
+margin-bottom:10px;
+border-radius:15px;
+
+}
+
+</style>
+
 </head>
 
 <body>
-  <header>
-    <div>
-      <h1>PROFREELANCE OS</h1>
-      <div class="sub">Live control panel powered by your Google Sheet (free). No logins, no subscriptions.</div>
-    </div>
-    <div class="badge">
-      <span class="dot"></span>
-      <span id="statusText">Connecting…</span>
-    </div>
-  </header>
 
-  <section class="grid">
-    <div class="panel">
-      <div class="label"><span>Revenue</span><span class="pill">ZAR</span></div>
-      <div class="metric" id="revVal">—</div>
-      <div class="note" id="revNote">Pulled from Metrics tab: Revenue</div>
-    </div>
+<h1>PROFREELANCE OS</h1>
 
-    <div class="panel">
-      <div class="label"><span>Active Clients</span><span class="pill">LIVE</span></div>
-      <div class="metric" id="clientsVal">—</div>
-      <div class="note" id="clientsNote">Pulled from Metrics tab: Active Clients</div>
-    </div>
+<div class="status">
 
-    <div class="panel">
-      <div class="label"><span>Pipeline Value</span><span class="pill">ZAR</span></div>
-      <div class="metric" id="pipeVal">—</div>
-      <div class="note" id="pipeNote">Pulled from Metrics tab: Pipeline Value</div>
-    </div>
-  </section>
+<span id="status">Connecting...</span>
 
-  <section class="chartWrap">
-    <p class="chartTitle">Signal</p>
-    <canvas id="signalChart"></canvas>
-  </section>
+</div>
 
-  <script>
-    // ✅ Your published CSV:
-    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQPgSVSxvqDb3ZT4xfOdWvS7L2femGi-QM_S7yG72TkFYj7RTvRcRIakEnnpfgOXEStak3Q72Q0YBGB/pub?gid=44313312&single=true&output=csv";
+<div class="grid">
 
-    const LS_KEY = "profreelance_os_history_v1";
-    const MAX_POINTS = 30;        // keep it light
-    const REFRESH_MS = 60_000;    // 1 min
+<div class="card">
 
-    const el = (id) => document.getElementById(id);
+Revenue
 
-    function fmtZAR(n){
-      const x = Number(n || 0);
-      return "R" + x.toLocaleString("en-ZA", { maximumFractionDigits: 0 });
-    }
+<div id="revenue" class="metric">—</div>
 
-    function parseCSV(text){
-      // expects:
-      // Metric,Value
-      // Revenue,247000
-      // Active Clients,18
-      // Pipeline Value,1200000
-      const lines = text.trim().split(/\r?\n/).map(l => l.split(","));
-      const out = {};
-      for(let i=1;i<lines.length;i++){
-        const k = (lines[i][0] || "").trim();
-        const v = (lines[i][1] || "").trim();
-        out[k] = v;
-      }
-      return out;
-    }
+</div>
 
-    function loadHistory(){
-      try{
-        const raw = localStorage.getItem(LS_KEY);
-        if(!raw) return [];
-        const data = JSON.parse(raw);
-        return Array.isArray(data) ? data : [];
-      }catch{ return []; }
-    }
+<div class="card">
 
-    function saveHistory(arr){
-      localStorage.setItem(LS_KEY, JSON.stringify(arr.slice(-MAX_POINTS)));
-    }
+Active Clients
 
-    let chart;
+<div id="clients" class="metric">—</div>
 
-    function buildChart(initial){
-      const ctx = el("signalChart");
-      chart = new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: initial.map(p => p.t),
-          datasets: [
-            {
-              label: "Revenue (ZAR)",
-              data: initial.map(p => p.revenue),
-              tension: 0.25,
-              borderWidth: 2,
-              pointRadius: 4,       // ✅ makes single points visible :contentReference[oaicite:1]{index=1}
-              pointHoverRadius: 6,
-              yAxisID: "yMoney"
-            },
-            {
-              label: "Pipeline (ZAR)",
-              data: initial.map(p => p.pipeline),
-              tension: 0.25,
-              borderWidth: 2,
-              pointRadius: 4,
-              pointHoverRadius: 6,
-              yAxisID: "yMoney"
-            },
-            {
-              label: "Clients",
-              data: initial.map(p => p.clients),
-              tension: 0.25,
-              borderWidth: 2,
-              pointRadius: 4,
-              pointHoverRadius: 6,
-              yAxisID: "yClients"
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { labels: { color: "rgba(255,255,255,0.75)" } },
-            tooltip: { mode: "index", intersect: false }
-          },
-          interaction: { mode: "index", intersect: false },
-          scales: {
-            x: {
-              ticks: { color: "rgba(255,255,255,0.5)" },
-              grid: { color: "rgba(255,255,255,0.06)" }
-            },
-            yMoney: {
-              position: "left",
-              ticks: { color: "rgba(255,255,255,0.5)" },
-              grid: { color: "rgba(255,255,255,0.06)" },
-              suggestedMin: 0, // ✅ helps axis behave nicely :contentReference[oaicite:2]{index=2}
-            },
-            yClients: {
-              position: "right",
-              ticks: { color: "rgba(255,255,255,0.5)" },
-              grid: { drawOnChartArea: false },
-              suggestedMin: 0
-            }
-          }
-        }
-      });
-    }
+</div>
 
-    function updateChart(history){
-      chart.data.labels = history.map(p => p.t);
-      chart.data.datasets[0].data = history.map(p => p.revenue);
-      chart.data.datasets[1].data = history.map(p => p.pipeline);
-      chart.data.datasets[2].data = history.map(p => p.clients);
-      chart.update();
-    }
+<div class="card">
 
-    async function refresh(){
-      try{
-        const res = await fetch(CSV_URL, { cache: "no-store" });
-        const text = await res.text();
-        const data = parseCSV(text);
+Pipeline Value
 
-        const revenue = Number(data["Revenue"] || 0);
-        const clients = Number(data["Active Clients"] || 0);
-        const pipeline = Number(data["Pipeline Value"] || 0);
+<div id="pipeline" class="metric">—</div>
 
-        el("revVal").textContent = fmtZAR(revenue);
-        el("clientsVal").textContent = (clients || 0).toLocaleString("en-ZA");
-        el("pipeVal").textContent = fmtZAR(pipeline);
+</div>
 
-        const now = new Date();
-        el("statusText").textContent = `Connected · ${now.toLocaleDateString()} , ${now.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})}`;
+</div>
 
-        // Build growing history in the browser
-        const history = loadHistory();
-        history.push({
-          t: now.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"}),
-          revenue, clients, pipeline
-        });
-        saveHistory(history);
+<canvas id="chart"></canvas>
 
-        if(!chart){
-          buildChart(history.slice(-MAX_POINTS));
-        }else{
-          updateChart(history.slice(-MAX_POINTS));
-        }
+<h2>Pipeline</h2>
 
-      } catch (e){
-        el("statusText").textContent = "Disconnected";
-      }
-    }
+<div id="pipelineList" class="list"></div>
 
-    // Start
-    refresh();
-    setInterval(refresh, REFRESH_MS);
-  </script>
+<h2>Activity</h2>
+
+<div id="activityList" class="list"></div>
+
+<script>
+
+
+const CSV_METRICS="https://docs.google.com/spreadsheets/d/e/2PACX-1vQPgSVSxvqDb3ZT4xfOdWvS7L2femGi-QM_S7yG72TkFYj7RTvRcRIakEnnpfgOXEStak3Q72Q0YBGB/pub?gid=44313312&single=true&output=csv";
+
+const CSV_SIGNAL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQPgSVSxvqDb3ZT4xfOdWvS7L2femGi-QM_S7yG72TkFYj7RTvRcRIakEnnpfgOXEStak3Q72Q0YBGB/pub?gid=584175548&single=true&output=csv";
+
+const CSV_PIPELINE="https://docs.google.com/spreadsheets/d/e/2PACX-1vQPgSVSxvqDb3ZT4xfOdWvS7L2femGi-QM_S7yG72TkFYj7RTvRcRIakEnnpfgOXEStak3Q72Q0YBGB/pub?gid=182871929&single=true&output=csv";
+
+const CSV_ACTIVITY="https://docs.google.com/spreadsheets/d/e/2PACX-1vQPgSVSxvqDb3ZT4xfOdWvS7L2femGi-QM_S7yG72TkFYj7RTvRcRIakEnnpfgOXEStak3Q72Q0YBGB/pub?gid=64013084&single=true&output=csv";
+
+
+
+function formatMoney(n){
+
+return "R"+Number(n).toLocaleString()
+
+}
+
+
+
+function parseCSV(text){
+
+return text.trim().split("\n").map(r=>r.split(","))
+
+}
+
+
+
+async function loadMetrics(){
+
+const text=await fetch(CSV_METRICS).then(r=>r.text())
+
+const rows=parseCSV(text)
+
+document.getElementById("revenue").innerText=formatMoney(rows[1][1])
+
+document.getElementById("clients").innerText=rows[2][1]
+
+document.getElementById("pipeline").innerText=formatMoney(rows[3][1])
+
+}
+
+
+
+async function loadSignal(){
+
+const text=await fetch(CSV_SIGNAL).then(r=>r.text())
+
+const rows=parseCSV(text)
+
+const labels=[]
+
+const revenue=[]
+
+const pipeline=[]
+
+for(let i=1;i<rows.length;i++){
+
+labels.push(rows[i][0])
+
+revenue.push(rows[i][1])
+
+pipeline.push(rows[i][2])
+
+}
+
+new Chart(document.getElementById("chart"),{
+
+type:"line",
+
+data:{
+
+labels:labels,
+
+datasets:[
+
+{
+
+label:"Revenue",
+
+data:revenue,
+
+borderColor:"#14b8a6"
+
+},
+
+{
+
+label:"Pipeline",
+
+data:pipeline,
+
+borderColor:"#00ffd0"
+
+}
+
+]
+
+}
+
+})
+
+}
+
+
+
+async function loadPipeline(){
+
+const text=await fetch(CSV_PIPELINE).then(r=>r.text())
+
+const rows=parseCSV(text)
+
+const el=document.getElementById("pipelineList")
+
+el.innerHTML=""
+
+for(let i=1;i<rows.length;i++){
+
+el.innerHTML+=`<div class="item">
+
+${rows[i][0]} - R${rows[i][1]}
+
+</div>`
+
+}
+
+}
+
+
+
+async function loadActivity(){
+
+const text=await fetch(CSV_ACTIVITY).then(r=>r.text())
+
+const rows=parseCSV(text)
+
+const el=document.getElementById("activityList")
+
+el.innerHTML=""
+
+for(let i=1;i<rows.length;i++){
+
+el.innerHTML+=`<div class="item">
+
+${rows[i][0]} - ${rows[i][1]}
+
+</div>`
+
+}
+
+}
+
+
+
+async function refresh(){
+
+try{
+
+await loadMetrics()
+
+await loadSignal()
+
+await loadPipeline()
+
+await loadActivity()
+
+document.getElementById("status").innerText="Connected"
+
+}
+
+catch{
+
+document.getElementById("status").innerText="Error"
+
+}
+
+}
+
+
+
+refresh()
+
+setInterval(refresh,30000)
+
+</script>
+
 </body>
+
 </html>
