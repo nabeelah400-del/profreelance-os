@@ -66,10 +66,6 @@
       mix-blend-mode: overlay;
     }
 
-    /* ✅ FIX: put bg + grain BEHIND the app to stop hover repaint banding */
-    .bg, .grain { z-index: 0; }
-    .app { position: relative; z-index: 1; }
-
     .app {
       height: 100vh;
       display: grid;
@@ -161,10 +157,7 @@
       box-shadow: 0 0 0 3px rgba(20,184,166,.10);
     }
 
-    .navLeft {
-      display: grid;
-      gap: 2px;
-    }
+    .navLeft { display: grid; gap: 2px; }
 
     .navName {
       font-weight: 700;
@@ -254,11 +247,7 @@
       gap: 14px;
     }
 
-    .titleWrap {
-      display: grid;
-      gap: 4px;
-      min-width: 0;
-    }
+    .titleWrap { display: grid; gap: 4px; min-width: 0; }
 
     .h1 {
       font-size: 34px;
@@ -408,8 +397,45 @@
       height: 340px;
       padding: 14px 16px 18px;
       box-sizing: border-box;
+      position: relative;
     }
     canvas { display:block; width:100% !important; height:100% !important; }
+
+    /* ✅ NEW: external tooltip (HTML) so canvas doesn't redraw on hover */
+    .chartTooltip {
+      position: absolute;
+      pointer-events: none;
+      transform: translate(-50%, -110%);
+      background: rgba(10,12,18,.92);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 10px;
+      padding: 10px 10px;
+      color: rgba(255,255,255,.86);
+      font-size: 12px;
+      line-height: 1.35;
+      opacity: 0;
+      transition: opacity .08s ease;
+      white-space: nowrap;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    .chartTooltip .title {
+      color: rgba(255,255,255,.92);
+      font-weight: 700;
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+    .chartTooltip .row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .chartTooltip .swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      flex: 0 0 auto;
+      border: 1px solid rgba(255,255,255,.18);
+    }
 
     /* Tables (no scrolling): we show compact rows only */
     .table {
@@ -648,6 +674,8 @@
             </div>
             <div class="chartWrap">
               <canvas id="signalChart"></canvas>
+              <!-- ✅ NEW: tooltip container (only used for chart 1) -->
+              <div class="chartTooltip" id="tooltip-signal"></div>
             </div>
           </div>
         </section>
@@ -661,6 +689,8 @@
             </div>
             <div class="chartWrap">
               <canvas id="signalChart2"></canvas>
+              <!-- ✅ NEW: tooltip container (only used for chart 2) -->
+              <div class="chartTooltip" id="tooltip-signal2"></div>
             </div>
           </div>
 
@@ -822,7 +852,6 @@
     };
 
     function parseCSV(text) {
-      // basic CSV parser with quoted support
       const rows = [];
       let row = [], cur = "", inQuotes = false;
 
@@ -927,6 +956,38 @@
       });
     });
 
+    // ✅ NEW: external tooltip handler (HTML tooltip instead of canvas tooltip)
+    function externalTooltipHandler(context) {
+      const { chart, tooltip } = context;
+      const canvasId = chart.canvas?.id || "";
+      const el = (canvasId === "signalChart2") ? $("#tooltip-signal2") : $("#tooltip-signal");
+      if (!el) return;
+
+      if (tooltip.opacity === 0) {
+        el.style.opacity = 0;
+        return;
+      }
+
+      const title = (tooltip.title || [])[0] || "";
+      const bodyLines = (tooltip.body || []).map(b => (b.lines || [])[0] || "");
+      const colors = (tooltip.labelColors || []).map(c => c.borderColor || "rgba(255,255,255,.55)");
+
+      el.innerHTML = `
+        <div class="title">${title}</div>
+        ${bodyLines.map((line, i) => `
+          <div class="row">
+            <span class="swatch" style="background:${colors[i]}"></span>
+            <span>${line}</span>
+          </div>
+        `).join("")}
+      `;
+
+      const { offsetLeft, offsetTop } = chart.canvas;
+      el.style.left = (offsetLeft + tooltip.caretX) + "px";
+      el.style.top  = (offsetTop + tooltip.caretY) + "px";
+      el.style.opacity = 1;
+    }
+
     // ===== CHARTS =====
     let chart1 = null;
     let chart2 = null;
@@ -984,11 +1045,8 @@
               labels: { color: tickColor, boxWidth: 18, boxHeight: 8, usePointStyle: false }
             },
             tooltip: {
-              backgroundColor: "rgba(10,12,18,.92)",
-              borderColor: "rgba(255,255,255,.12)",
-              borderWidth: 1,
-              titleColor: "rgba(255,255,255,.92)",
-              bodyColor: "rgba(255,255,255,.86)",
+              enabled: false,
+              external: externalTooltipHandler,
               callbacks: {
                 label: (ctx) => {
                   const label = ctx.dataset.label || "";
@@ -1040,7 +1098,6 @@
       $("#pipelineCountBadge").textContent = `${rows.length} deal(s)`;
       $("#pipelineCountPill").textContent = String(rows.length);
 
-      // No scrolling: show up to 6 rows
       const shown = rows.slice(0, 6);
 
       tbody.innerHTML = shown.map(r => {
@@ -1075,7 +1132,6 @@
       $("#activityCountBadge").textContent = `${rows.length} log(s)`;
       $("#activityCountPill").textContent = String(rows.length);
 
-      // No scrolling: show up to 6 rows
       const shown = rows.slice(0, 6);
 
       tbody.innerHTML = shown.map(r => {
@@ -1144,7 +1200,6 @@
           fetchCSV(FEEDS.activity),
         ]);
 
-        // METRICS -> KPI
         const metricMap = {};
         for (const r of metricsRows) {
           const key = (r["Metric"] || r["metric"] || "").trim();
@@ -1163,7 +1218,6 @@
         $("#clientsUpdated").textContent = metricMap["Active Clients"]?.["Last Updated"] || "--";
         $("#pipeUpdated").textContent = metricMap["Pipeline Value"]?.["Last Updated"] || "--";
 
-        // SIGNAL -> chart data
         const labels = signalRows.map(r => (r["Date"] || r["date"] || "").trim());
         const sRevenue = signalRows.map(r => safeNum(r["Revenue (ZAR)"] || r["Revenue"]));
         const sPipeline = signalRows.map(r => safeNum(r["Pipeline (ZAR)"] || r["Pipeline"]));
@@ -1173,7 +1227,6 @@
         $("#signalRange").textContent = range;
         $("#signalRange2").textContent = range;
 
-        // Latest point card
         if (labels.length) {
           const i = labels.length - 1;
           $("#latestPoint").innerHTML = `
@@ -1191,22 +1244,15 @@
           $("#latestPoint").innerHTML = `<div class="muted">No signal data found.</div>`;
         }
 
-        // Render charts (two canvases)
         if (chart1) chart1.destroy();
         if (chart2) chart2.destroy();
         chart1 = buildSignalChart($("#signalChart"), labels, sRevenue, sPipeline, sClients);
         chart2 = buildSignalChart($("#signalChart2"), labels, sRevenue, sPipeline, sClients);
 
-        // Pipeline + Activity
         renderPipeline(pipelineRows);
         renderActivity(activityRows);
-
-        // Revenue ledger comes from "Revenue" tab, but your CSV list doesn’t include it separately.
-        // If you want it live too, publish the Revenue tab as CSV and paste it here.
-        // For now we keep it empty and clean to avoid fake data.
         renderRevenueLedger([]);
 
-        // System info
         $("#systemInfo").innerHTML = `
           <div><span class="muted">Feeds:</span> Metrics, Signal, Pipeline, Activity</div>
           <div><span class="muted">Refresh:</span> Every ${BRAND.REFRESH_SECONDS}s</div>
@@ -1219,7 +1265,6 @@
       } catch (err) {
         console.error(err);
         setStatus(false, "Error");
-        // keep lastGoodSync as-is, don’t wipe it
       }
     }
 
@@ -1239,7 +1284,6 @@
     // ===== INIT =====
     $("#companyTitle").textContent = BRAND.COMPANY_NAME;
     $("#refreshEvery").textContent = BRAND.REFRESH_SECONDS + "s";
-
     $("#btnRefresh").addEventListener("click", () => loadAll());
 
     loadAll();
