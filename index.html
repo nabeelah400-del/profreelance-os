@@ -400,19 +400,12 @@
     }
 
     /* Chart panel (no scrolling) */
-.chartWrap {
-  height: 340px;
-  padding: 14px 16px 18px;
-  box-sizing: border-box;
-  background: #05070f;
-}
-    canvas { 
-  display:block; 
-  width:100% !important; 
-  height:100% !important; 
-  transform: translateZ(0);
-  backface-visibility: hidden;
-}
+    .chartWrap {
+      height: 340px;
+      padding: 14px 16px 18px;
+      box-sizing: border-box;
+    }
+    canvas { display:block; width:100% !important; height:100% !important; }
 
     /* Tables (no scrolling): we show compact rows only */
     .table {
@@ -933,17 +926,6 @@
     // ===== CHARTS =====
     let chart1 = null;
     let chart2 = null;
-    const solidCanvasBg = {
-  id: "solidCanvasBg",
-  beforeDraw(chart) {
-    const { ctx, canvas } = chart;
-    ctx.save();
-    ctx.globalCompositeOperation = "source-over";
-    ctx.fillStyle = "#05070f"; // matches your background
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.restore();
-  }
-};
 
     function buildSignalChart(ctx, labels, revenue, pipeline, clients) {
       const gridColor = "rgba(255,255,255,.07)";
@@ -951,7 +933,6 @@
 
       return new Chart(ctx, {
         type: "line",
-        plugins: [solidCanvasBg],
         data: {
           labels,
           datasets: [
@@ -991,17 +972,14 @@
           ]
         },
         options: {
-          devicePixelRatio: 1,
           responsive: true,
           maintainAspectRatio: false,
-          interaction: { mode: "index", intersect: false },
+          interaction: { mode: "nearest", intersect: true },
           plugins: {
             legend: {
               labels: { color: tickColor, boxWidth: 18, boxHeight: 8, usePointStyle: false }
             },
             tooltip: {
-              caretSize: 0,
-              caretPadding: 0,
               backgroundColor: "rgba(10,12,18,.92)",
               borderColor: "rgba(255,255,255,.12)",
               borderWidth: 1,
@@ -1265,3 +1243,4 @@
   </script>
 </body>
 </html>
+
