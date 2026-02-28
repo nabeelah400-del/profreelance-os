@@ -400,11 +400,13 @@
     }
 
     /* Chart panel (no scrolling) */
-    .chartWrap {
-      height: 340px;
-      padding: 14px 16px 18px;
-      box-sizing: border-box;
-    }
+.chartWrap {
+  height: 340px;
+  padding: 14px 16px 18px;
+  box-sizing: border-box;
+  isolation: isolate;
+  transform: translateZ(0);
+}
     canvas { 
   display:block; 
   width:100% !important; 
@@ -932,6 +934,17 @@
     // ===== CHARTS =====
     let chart1 = null;
     let chart2 = null;
+    const solidCanvasBg = {
+  id: "solidCanvasBg",
+  beforeDraw(chart) {
+    const { ctx, canvas } = chart;
+    ctx.save();
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = "#05070f"; // matches your background
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
+  }
+};
 
     function buildSignalChart(ctx, labels, revenue, pipeline, clients) {
       const gridColor = "rgba(255,255,255,.07)";
@@ -939,6 +952,7 @@
 
       return new Chart(ctx, {
         type: "line",
+        plugins: [solidCanvasBg],
         data: {
           labels,
           datasets: [
