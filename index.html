@@ -14,22 +14,15 @@
   <style>
     :root{
       --bg:#05070f;
-      --panel:rgba(255,255,255,.06);
-      --panel2:rgba(255,255,255,.04);
       --stroke:rgba(255,255,255,.10);
-      --stroke2:rgba(255,255,255,.14);
       --text:rgba(255,255,255,.92);
       --muted:rgba(255,255,255,.62);
-      --muted2:rgba(255,255,255,.42);
       --teal:#14b8a6;
 
       --shadow: 0 24px 70px rgba(0,0,0,.55);
       --shadow2: 0 10px 30px rgba(0,0,0,.35);
 
       --r-xl: 22px;
-      --r-lg: 18px;
-      --r-md: 14px;
-
       --gap: 18px;
     }
 
@@ -43,7 +36,7 @@
       color: var(--text);
     }
 
-    /* subtle premium background */
+    /* Premium background */
     .bg {
       position: fixed;
       inset: 0;
@@ -57,13 +50,13 @@
       pointer-events: none;
     }
 
+    /* IMPORTANT: no mix-blend-mode (causes scanlines with canvas + blur) */
     .grain {
       position: fixed;
       inset: 0;
       pointer-events: none;
-      opacity: .09;
+      opacity: .10;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
-      mix-blend-mode: overlay;
     }
 
     .app {
@@ -86,57 +79,26 @@
       grid-template-rows: auto 1fr auto;
       min-width: 0;
       backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      isolation: isolate;
     }
 
-    .sideTop {
-      padding: 18px 18px 14px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-    }
+    .sideTop { padding: 18px 18px 14px; border-bottom: 1px solid rgba(255,255,255,.08); }
 
-    .brandRow {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
+    .brandRow { display:flex; align-items:center; gap:10px; margin-bottom: 10px; }
     .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 999px;
+      width: 10px; height: 10px; border-radius: 999px;
       background: var(--teal);
       box-shadow: 0 0 0 6px rgba(20,184,166,.12), 0 0 22px rgba(20,184,166,.35);
       flex: 0 0 auto;
     }
+    .brandTitle { font-weight: 800; letter-spacing: .14em; font-size: 12px; text-transform: uppercase; line-height: 1.1; }
+    .brandSub { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
-    .brandTitle {
-      font-weight: 800;
-      letter-spacing: .14em;
-      font-size: 12px;
-      text-transform: uppercase;
-      line-height: 1.1;
-    }
-
-    .brandSub {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    .nav {
-      padding: 14px;
-      display: grid;
-      gap: 10px;
-      align-content: start;
-    }
-
-    .navBtn {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px 12px;
-      border-radius: 14px;
+    .nav { padding: 14px; display:grid; gap:10px; align-content:start; }
+    .navBtn{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding: 12px; border-radius: 14px;
       background: rgba(255,255,255,.03);
       border: 1px solid rgba(255,255,255,.08);
       color: var(--text);
@@ -144,36 +106,16 @@
       user-select: none;
       transition: transform .12s ease, border-color .12s ease, background .12s ease;
     }
-
-    .navBtn:hover {
-      transform: translateY(-1px);
-      border-color: rgba(20,184,166,.35);
-      background: rgba(20,184,166,.06);
-    }
-
-    .navBtn.active {
+    .navBtn:hover{ transform: translateY(-1px); border-color: rgba(20,184,166,.35); background: rgba(20,184,166,.06); }
+    .navBtn.active{
       border-color: rgba(20,184,166,.55);
       background: linear-gradient(180deg, rgba(20,184,166,.12), rgba(255,255,255,.03));
       box-shadow: 0 0 0 3px rgba(20,184,166,.10);
     }
-
-    .navLeft {
-      display: grid;
-      gap: 2px;
-    }
-
-    .navName {
-      font-weight: 700;
-      font-size: 14px;
-      letter-spacing: .02em;
-    }
-
-    .navHint {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .pill {
+    .navLeft{ display:grid; gap:2px; }
+    .navName{ font-weight: 700; font-size: 14px; letter-spacing: .02em; }
+    .navHint{ font-size: 12px; color: var(--muted); }
+    .pill{
       font-size: 11px;
       color: rgba(255,255,255,.78);
       border: 1px solid rgba(255,255,255,.10);
@@ -186,123 +128,64 @@
     .sideBottom {
       padding: 14px 16px;
       border-top: 1px solid rgba(255,255,255,.08);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
     }
-
-    .statusPill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      border-radius: 999px;
+    .statusPill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 8px 12px; border-radius: 999px;
       border: 1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.04);
-      font-size: 12px;
-      color: rgba(255,255,255,.85);
+      font-size: 12px; color: rgba(255,255,255,.85);
     }
-
-    .statusDot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.35);
-      box-shadow: none;
-    }
-    .statusDot.ok {
-      background: #22c55e;
-      box-shadow: 0 0 0 6px rgba(34,197,94,.10), 0 0 18px rgba(34,197,94,.25);
-    }
-    .statusDot.err {
-      background: #ef4444;
-      box-shadow: 0 0 0 6px rgba(239,68,68,.10), 0 0 18px rgba(239,68,68,.25);
-    }
-
-    .clockMini {
-      font-variant-numeric: tabular-nums;
-      color: rgba(255,255,255,.78);
-      font-size: 12px;
-      letter-spacing: .02em;
-      white-space: nowrap;
-    }
+    .statusDot{ width: 8px; height: 8px; border-radius: 999px; background: rgba(255,255,255,.35); }
+    .statusDot.ok { background: #22c55e; box-shadow: 0 0 0 6px rgba(34,197,94,.10), 0 0 18px rgba(34,197,94,.25); }
+    .statusDot.err{ background: #ef4444; box-shadow: 0 0 0 6px rgba(239,68,68,.10), 0 0 18px rgba(239,68,68,.25); }
+    .clockMini{ font-variant-numeric: tabular-nums; color: rgba(255,255,255,.78); font-size: 12px; letter-spacing:.02em; white-space: nowrap; }
 
     /* Main */
-    .main {
+    .main{
       border-radius: var(--r-xl);
       background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
       border: 1px solid var(--stroke);
       box-shadow: var(--shadow);
       overflow: hidden;
-      display: grid;
+      display:grid;
       grid-template-rows: auto 1fr;
       min-width: 0;
       backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      isolation: isolate; /* reduce bleed-through */
     }
 
-    .topbar {
+    .topbar{
       padding: 18px 22px;
       border-bottom: 1px solid rgba(255,255,255,.08);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
+      display:flex; align-items:center; justify-content:space-between; gap:14px;
     }
-
-    .titleWrap {
-      display: grid;
-      gap: 4px;
-      min-width: 0;
+    .titleWrap{ display:grid; gap:4px; min-width:0; }
+    .h1{
+      font-size: 34px; letter-spacing:.02em; font-weight: 900; margin:0; line-height:1.08;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-
-    .h1 {
-      font-size: 34px;
-      letter-spacing: .02em;
-      font-weight: 900;
-      margin: 0;
-      line-height: 1.08;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .subline{
+      display:flex; align-items:center; gap:10px; color: rgba(255,255,255,.62);
+      font-size: 12px; letter-spacing:.08em; text-transform: uppercase; white-space: nowrap;
     }
+    .subline .sep{ opacity:.35; }
 
-    .subline {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--muted);
-      font-size: 12px;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-
-    .subline .sep { opacity: .35; }
-
-    .topRight {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex: 0 0 auto;
-    }
-
-    .chip {
+    .topRight{ display:flex; align-items:center; gap:10px; flex: 0 0 auto; }
+    .chip{
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.04);
       padding: 9px 12px;
       font-size: 12px;
       color: rgba(255,255,255,.85);
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
+      display:inline-flex; align-items:center; gap:8px;
       white-space: nowrap;
     }
-
-    .chip strong { font-variant-numeric: tabular-nums; }
-
-    .btn {
+    .chip strong{ font-variant-numeric: tabular-nums; }
+    .btn{
       border-radius: 999px;
       border: 1px solid rgba(20,184,166,.35);
       background: rgba(20,184,166,.10);
@@ -313,67 +196,60 @@
       transition: transform .12s ease, background .12s ease, border-color .12s ease;
       white-space: nowrap;
     }
-    .btn:hover { transform: translateY(-1px); border-color: rgba(20,184,166,.55); background: rgba(20,184,166,.14); }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(20,184,166,.55); background: rgba(20,184,166,.14); }
 
-    .content {
+    .content{
       height: 100%;
       overflow: hidden;
       padding: 18px 22px 22px;
       box-sizing: border-box;
-      display: grid;
+      display:grid;
       gap: var(--gap);
       align-content: start;
     }
 
-    /* Panels */
-    .grid3 {
-      display: grid;
+    .grid3{
+      display:grid;
       grid-template-columns: 1.2fr .8fr 1.2fr;
       gap: var(--gap);
     }
 
-    .panel {
+    .panel{
       border-radius: var(--r-xl);
       border: 1px solid rgba(255,255,255,.10);
       background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
       box-shadow: 0 16px 50px rgba(0,0,0,.35);
       overflow: hidden;
       min-width: 0;
+      isolation: isolate;
+      contain: paint; /* BIG: isolates paint to prevent UI-wide scanlines */
     }
 
-    .panelHead {
+    .panelHead{
       padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
       border-bottom: 1px solid rgba(255,255,255,.07);
     }
 
-    .panelTitle {
+    .panelTitle{
       font-weight: 800;
       letter-spacing: .14em;
       font-size: 11px;
       text-transform: uppercase;
       color: rgba(255,255,255,.82);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: nowrap; overflow:hidden; text-overflow: ellipsis;
     }
 
-    .panelBody { padding: 16px; }
+    .panelBody{ padding: 16px; }
 
-    .kpiLabel {
+    .kpiLabel{
       font-size: 13px;
       color: rgba(255,255,255,.78);
       margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
     }
 
-    .kpiValue {
+    .kpiValue{
       font-variant-numeric: tabular-nums;
       font-size: 44px;
       font-weight: 900;
@@ -383,7 +259,7 @@
       line-height: 1;
     }
 
-    .badge {
+    .badge{
       font-size: 11px;
       padding: 6px 10px;
       border-radius: 999px;
@@ -392,28 +268,36 @@
       color: rgba(255,255,255,.78);
       white-space: nowrap;
     }
-
-    .badge.live {
+    .badge.live{
       border-color: rgba(34,197,94,.35);
       background: rgba(34,197,94,.08);
       color: rgba(255,255,255,.88);
     }
 
-    /* Chart panel (no scrolling) */
-    .chartWrap {
+    /* Chart wrap: isolate it HARD */
+    .chartWrap{
       height: 340px;
       padding: 14px 16px 18px;
       box-sizing: border-box;
-      position: relative; /* ✅ needed for external tooltip positioning */
+      position: relative;
+      contain: paint;
+      isolation: isolate;
+      transform: translateZ(0);
+      will-change: transform;
     }
-    canvas { display:block; width:100% !important; height:100% !important; }
+    canvas{
+      display:block;
+      width:100% !important;
+      height:100% !important;
+      transform: translateZ(0);
+    }
 
-    /* External tooltip (kills the "hover line" because we disable canvas tooltip) */
-    .chartTooltip {
-      position: absolute;
+    /* Click-to-inspect tooltip */
+    .chartTooltip{
+      position:absolute;
       z-index: 50;
-      pointer-events: none;
-      opacity: 0;
+      pointer-events:none;
+      opacity:0;
       transform: translate(-50%, calc(-100% - 12px));
       padding: 10px 12px;
       border-radius: 14px;
@@ -423,66 +307,48 @@
       color: rgba(255,255,255,.92);
       font-size: 12px;
       line-height: 1.25;
-      min-width: 160px;
+      min-width: 180px;
       backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
-    .chartTooltip .tTitle {
-      font-weight: 700;
-      color: rgba(255,255,255,.92);
-      margin-bottom: 6px;
-    }
-    .chartTooltip .tRow {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      color: rgba(255,255,255,.86);
-      font-variant-numeric: tabular-nums;
-    }
-    .chartTooltip .tKey { color: rgba(255,255,255,.62); }
+    .chartTooltip .tTitle{ font-weight: 700; margin-bottom: 6px; }
+    .chartTooltip .tRow{ display:flex; justify-content:space-between; gap:12px; font-variant-numeric: tabular-nums; }
+    .chartTooltip .tKey{ color: rgba(255,255,255,.62); }
 
-    /* Tables (no scrolling): we show compact rows only */
-    .table {
+    /* Tables */
+    .table{
       width: 100%;
       border-collapse: collapse;
       font-size: 12px;
       color: rgba(255,255,255,.86);
       table-layout: fixed;
     }
-
-    .table th {
-      text-align: left;
+    .table th{
+      text-align:left;
       font-size: 10px;
-      letter-spacing: .16em;
+      letter-spacing:.16em;
       text-transform: uppercase;
       color: rgba(255,255,255,.55);
       padding: 10px 10px;
       border-bottom: 1px solid rgba(255,255,255,.07);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: nowrap; overflow:hidden; text-overflow: ellipsis;
     }
-
-    .table td {
+    .table td{
       padding: 11px 10px;
       border-bottom: 1px solid rgba(255,255,255,.06);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: nowrap; overflow:hidden; text-overflow: ellipsis;
       font-variant-numeric: tabular-nums;
     }
+    .table tr:last-child td{ border-bottom: 0; }
 
-    .table tr:last-child td { border-bottom: 0; }
-
-    .muted { color: rgba(255,255,255,.62); }
-
-    .split2 {
-      display: grid;
+    .split2{
+      display:grid;
       grid-template-columns: 1fr 1fr;
       gap: var(--gap);
       align-items: start;
     }
 
-    .note {
+    .note{
       padding: 16px;
       border-radius: var(--r-xl);
       border: 1px solid rgba(255,255,255,.10);
@@ -490,43 +356,40 @@
       color: rgba(255,255,255,.85);
       line-height: 1.45;
       box-shadow: 0 14px 44px rgba(0,0,0,.28);
+      contain: paint;
     }
-    .note h3 {
+    .note h3{
       margin: 0 0 8px 0;
       font-size: 14px;
       letter-spacing: .12em;
       text-transform: uppercase;
     }
-    .note a {
+    .note a{
       color: rgba(20,184,166,.95);
       text-decoration: none;
       border-bottom: 1px solid rgba(20,184,166,.35);
     }
-    .note a:hover { border-bottom-color: rgba(20,184,166,.75); }
+    .note a:hover{ border-bottom-color: rgba(20,184,166,.75); }
 
-    /* Tabs */
-    .view { display: none; height: 100%; overflow: hidden; }
-    .view.active { display: grid; gap: var(--gap); }
+    .view{ display:none; height:100%; overflow:hidden; }
+    .view.active{ display:grid; gap: var(--gap); }
 
-    /* Responsive without introducing scroll */
     @media (max-width: 1100px){
-      .app { grid-template-columns: 1fr; }
-      .side { display: none; }
-      .grid3 { grid-template-columns: 1fr; }
-      .split2 { grid-template-columns: 1fr; }
-      .chartWrap { height: 300px; }
+      .app{ grid-template-columns: 1fr; }
+      .side{ display:none; }
+      .grid3{ grid-template-columns: 1fr; }
+      .split2{ grid-template-columns: 1fr; }
+      .chartWrap{ height: 300px; }
     }
-
     @media (max-height: 820px){
-      .h1 { font-size: 30px; }
-      .kpiValue { font-size: 40px; }
-      .chartWrap { height: 300px; }
+      .h1{ font-size: 30px; }
+      .kpiValue{ font-size: 40px; }
+      .chartWrap{ height: 300px; }
     }
-
     @media (max-height: 740px){
-      .chartWrap { height: 270px; }
-      .kpiValue { font-size: 36px; }
-      .panelBody { padding: 14px; }
+      .chartWrap{ height: 270px; }
+      .kpiValue{ font-size: 36px; }
+      .panelBody{ padding: 14px; }
     }
   </style>
 </head>
@@ -634,7 +497,7 @@
               </div>
               <div class="panelBody">
                 <div class="kpiLabel">
-                  <span class="muted">Current</span>
+                  <span style="color:rgba(255,255,255,.78)">Current</span>
                   <span class="badge" id="revUpdated">--</span>
                 </div>
                 <div class="kpiValue" id="kpiRevenue">R0</div>
@@ -648,7 +511,7 @@
               </div>
               <div class="panelBody">
                 <div class="kpiLabel">
-                  <span class="muted">Current</span>
+                  <span style="color:rgba(255,255,255,.78)">Current</span>
                   <span class="badge" id="clientsUpdated">--</span>
                 </div>
                 <div class="kpiValue" id="kpiClients">0</div>
@@ -662,7 +525,7 @@
               </div>
               <div class="panelBody">
                 <div class="kpiLabel">
-                  <span class="muted">Current</span>
+                  <span style="color:rgba(255,255,255,.78)">Current</span>
                   <span class="badge" id="pipeUpdated">--</span>
                 </div>
                 <div class="kpiValue" id="kpiPipeline">R0</div>
@@ -675,7 +538,7 @@
               <div class="panelTitle">Signal</div>
               <div class="badge" id="signalRange">--</div>
             </div>
-            <div class="chartWrap">
+            <div class="chartWrap" id="chartWrap1">
               <canvas id="signalChart"></canvas>
             </div>
           </div>
@@ -688,7 +551,7 @@
               <div class="panelTitle">Signal Trend</div>
               <div class="badge" id="signalRange2">--</div>
             </div>
-            <div class="chartWrap">
+            <div class="chartWrap" id="chartWrap2">
               <canvas id="signalChart2"></canvas>
             </div>
           </div>
@@ -700,7 +563,7 @@
                 <div class="badge">Snapshot</div>
               </div>
               <div class="panelBody" id="latestPoint">
-                <div class="muted">Loading…</div>
+                <div style="color:rgba(255,255,255,.62)">Loading…</div>
               </div>
             </div>
 
@@ -710,8 +573,8 @@
                 <div class="badge">Auto</div>
               </div>
               <div class="panelBody">
-                <div class="muted" style="line-height:1.5">
-                  Signal is pulled live from your Google Sheet. This view is intentionally scroll-free for clean embeds.
+                <div style="color:rgba(255,255,255,.62); line-height:1.5">
+                  Tip: Click a point on the chart to inspect values. (Hover is intentionally disabled to prevent the scanline bug.)
                 </div>
               </div>
             </div>
@@ -738,7 +601,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr><td class="muted" colspan="6">Loading…</td></tr>
+                  <tr><td style="color:rgba(255,255,255,.62)" colspan="6">Loading…</td></tr>
                 </tbody>
               </table>
             </div>
@@ -765,7 +628,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr><td class="muted" colspan="6">Loading…</td></tr>
+                  <tr><td style="color:rgba(255,255,255,.62)" colspan="6">Loading…</td></tr>
                 </tbody>
               </table>
             </div>
@@ -789,7 +652,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr><td class="muted" colspan="6">Loading…</td></tr>
+                  <tr><td style="color:rgba(255,255,255,.62)" colspan="6">Loading…</td></tr>
                 </tbody>
               </table>
             </div>
@@ -813,7 +676,7 @@
               <div class="badge">Health</div>
             </div>
             <div class="panelBody" id="systemInfo" style="line-height:1.6">
-              <div class="muted">Loading…</div>
+              <div style="color:rgba(255,255,255,.62)">Loading…</div>
             </div>
           </div>
         </section>
@@ -840,18 +703,28 @@
     // ===== HELPERS =====
     const $ = (s) => document.querySelector(s);
 
-    const fmtInt = (n) => {
-      const x = Number(n || 0);
-      return x.toLocaleString("en-ZA", { maximumFractionDigits: 0 });
-    };
+    const fmtInt = (n) => Number(n||0).toLocaleString("en-ZA", { maximumFractionDigits: 0 });
+    const fmtZAR = (n) => "R" + Number(n||0).toLocaleString("en-ZA", { maximumFractionDigits: 0 });
 
-    const fmtZAR = (n) => {
-      const x = Number(n || 0);
-      return "R" + x.toLocaleString("en-ZA", { maximumFractionDigits: 0 });
-    };
+    function safeNum(x) {
+      if (x === null || x === undefined) return 0;
+      const s = String(x).replace(/[^0-9.\-]/g, "");
+      const n = Number(s);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function timeHHMM() {
+      return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    }
+    function timeHHMMSS() {
+      return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    }
+    function shortDate(d) {
+      if (!d) return "--";
+      return String(d).replaceAll("-", "/");
+    }
 
     function parseCSV(text) {
-      // basic CSV parser with quoted support
       const rows = [];
       let row = [], cur = "", inQuotes = false;
 
@@ -882,7 +755,6 @@
           header.forEach((h, idx) => obj[h] = (r[idx] ?? "").trim());
           return obj;
         });
-
       return data;
     }
 
@@ -890,42 +762,18 @@
       const cacheBust = (url.includes("?") ? "&" : "?") + "t=" + Date.now();
       const res = await fetch(url + cacheBust, { cache: "no-store" });
       if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
-      const text = await res.text();
-      return parseCSV(text);
+      return parseCSV(await res.text());
     }
 
     function setStatus(ok, message) {
       const dot = $("#statusDot");
-      const txt = $("#statusText");
-      dot.classList.remove("ok", "err");
+      dot.classList.remove("ok","err");
       dot.classList.add(ok ? "ok" : "err");
-      txt.textContent = message;
+      $("#statusText").textContent = message;
     }
 
     function setLastGoodSync(ts) {
       $("#lastGoodSync").textContent = ts ? `last good sync ${ts}` : "last good sync --";
-    }
-
-    function timeHHMM() {
-      const d = new Date();
-      return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    }
-
-    function timeHHMMSS() {
-      const d = new Date();
-      return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-    }
-
-    function shortDate(d) {
-      if (!d) return "--";
-      return String(d).replaceAll("-", "/");
-    }
-
-    function safeNum(x) {
-      if (x === null || x === undefined) return 0;
-      const s = String(x).replace(/[^0-9.\-]/g, "");
-      const n = Number(s);
-      return Number.isFinite(n) ? n : 0;
     }
 
     function animateNumber(el, to, formatter, ms = 650) {
@@ -949,127 +797,76 @@
       btn.addEventListener("click", () => {
         document.querySelectorAll(".navBtn").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
-
         const view = btn.dataset.view;
         document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
         document.querySelector("#view-" + view).classList.add("active");
       });
     });
 
-    // ===== TOOLTIP (EXTERNAL) =====
-    // This removes the Chart.js "hover line" because we disable the canvas tooltip entirely.
-    function getOrCreateTooltip(chart) {
-      const parent = chart.canvas.parentNode;
-      let el = parent.querySelector(".chartTooltip");
+    // ===== CLICK TOOLTIP (NO HOVER EVENTS = NO SCANLINE) =====
+    function getOrCreateTooltip(container) {
+      let el = container.querySelector(".chartTooltip");
       if (!el) {
         el = document.createElement("div");
         el.className = "chartTooltip";
         el.innerHTML = `<div class="tTitle"></div><div class="tBody"></div>`;
-        parent.appendChild(el);
+        container.appendChild(el);
       }
       return el;
     }
 
-    function externalTooltipHandler(context) {
-      const { chart, tooltip } = context;
-      const tooltipEl = getOrCreateTooltip(chart);
+    function showTooltip(container, title, rows, x, y) {
+      const tip = getOrCreateTooltip(container);
+      tip.querySelector(".tTitle").textContent = title || "";
+      tip.querySelector(".tBody").innerHTML = rows.map(r =>
+        `<div class="tRow"><span class="tKey">${r.k}</span><span>${r.v}</span></div>`
+      ).join("");
+      tip.style.left = x + "px";
+      tip.style.top = y + "px";
+      tip.style.opacity = 1;
 
-      if (tooltip.opacity === 0) {
-        tooltipEl.style.opacity = 0;
-        return;
-      }
+      clearTimeout(tip._hideTimer);
+      tip._hideTimer = setTimeout(() => { tip.style.opacity = 0; }, 2600);
+    }
 
-      const title = (tooltip.title && tooltip.title[0]) ? tooltip.title[0] : "";
-      tooltipEl.querySelector(".tTitle").textContent = title;
-
-      const body = (tooltip.dataPoints || []).map(dp => {
-        const label = dp.dataset.label || "";
-        const v = dp.parsed.y;
-        const val = label.includes("(ZAR)") ? fmtZAR(v) : fmtInt(v);
-        return `<div class="tRow"><span class="tKey">${label}</span><span>${val}</span></div>`;
-      }).join("");
-
-      tooltipEl.querySelector(".tBody").innerHTML = body;
-
-      const { offsetLeft: posX, offsetTop: posY } = chart.canvas;
-      tooltipEl.style.left = (posX + tooltip.caretX) + "px";
-      tooltipEl.style.top  = (posY + tooltip.caretY) + "px";
-      tooltipEl.style.opacity = 1;
+    function hideTooltip(container) {
+      const tip = container.querySelector(".chartTooltip");
+      if (tip) tip.style.opacity = 0;
     }
 
     // ===== CHARTS =====
     let chart1 = null;
     let chart2 = null;
 
-    function buildSignalChart(canvasEl, labels, revenue, pipeline, clients) {
+    function buildSignalChart(canvasEl, wrapEl, labels, revenue, pipeline, clients) {
       const gridColor = "rgba(255,255,255,.07)";
       const tickColor = "rgba(255,255,255,.55)";
 
-      return new Chart(canvasEl, {
+      const c = new Chart(canvasEl, {
         type: "line",
         data: {
           labels,
           datasets: [
-            {
-              label: "Revenue (ZAR)",
-              data: revenue,
-              borderColor: BRAND.ACCENT,
-              backgroundColor: "rgba(20,184,166,.14)",
-              borderWidth: 2,
-              pointRadius: 2,
-              pointHoverRadius: 4,
-              tension: 0.35,
-              yAxisID: "yMoney"
-            },
-            {
-              label: "Pipeline (ZAR)",
-              data: pipeline,
-              borderColor: "rgba(20,184,166,.55)",
-              backgroundColor: "rgba(20,184,166,.08)",
-              borderWidth: 2,
-              pointRadius: 2,
-              pointHoverRadius: 4,
-              tension: 0.35,
-              yAxisID: "yMoney"
-            },
-            {
-              label: "Clients",
-              data: clients,
-              borderColor: "rgba(255,255,255,.55)",
-              backgroundColor: "rgba(255,255,255,.06)",
-              borderWidth: 2,
-              pointRadius: 2,
-              pointHoverRadius: 4,
-              tension: 0.35,
-              yAxisID: "yClients"
-            }
+            { label: "Revenue (ZAR)",  data: revenue,  borderColor: BRAND.ACCENT,           backgroundColor: "rgba(20,184,166,.14)", borderWidth: 2, pointRadius: 2, pointHoverRadius: 3, tension: 0.35, yAxisID: "yMoney" },
+            { label: "Pipeline (ZAR)", data: pipeline, borderColor: "rgba(20,184,166,.55)", backgroundColor: "rgba(20,184,166,.08)", borderWidth: 2, pointRadius: 2, pointHoverRadius: 3, tension: 0.35, yAxisID: "yMoney" },
+            { label: "Clients",        data: clients,  borderColor: "rgba(255,255,255,.55)", backgroundColor: "rgba(255,255,255,.06)", borderWidth: 2, pointRadius: 2, pointHoverRadius: 3, tension: 0.35, yAxisID: "yClients" }
           ]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
 
-          // Keep the same UX (hover shows all datasets at the same x)
-          interaction: { mode: "index", intersect: false },
+          // CRITICAL: disable hover events entirely (prevents the repaint-trigger line)
+          events: ["click"],
+
+          interaction: { mode: "nearest", intersect: true },
 
           plugins: {
-            legend: {
-              labels: { color: tickColor, boxWidth: 18, boxHeight: 8, usePointStyle: false }
-            },
-
-            // ✅ This is the actual fix:
-            // Disable the canvas tooltip (removes hover guideline/line),
-            // then render our own HTML tooltip.
-            tooltip: {
-              enabled: false,
-              external: externalTooltipHandler
-            }
+            legend: { labels: { color: tickColor, boxWidth: 18, boxHeight: 8 } },
+            tooltip: { enabled: false } // no canvas tooltip ever
           },
           scales: {
-            x: {
-              grid: { color: gridColor },
-              ticks: { color: tickColor, maxRotation: 0, autoSkip: true }
-            },
+            x: { grid: { color: gridColor }, ticks: { color: tickColor, maxRotation: 0, autoSkip: true } },
             yMoney: {
               position: "left",
               grid: { color: gridColor },
@@ -1083,34 +880,51 @@
                 }
               }
             },
-            yClients: {
-              position: "right",
-              grid: { drawOnChartArea: false },
-              ticks: { color: tickColor }
-            }
+            yClients: { position: "right", grid: { drawOnChartArea: false }, ticks: { color: tickColor } }
           },
-          // Extra polish: no animation on resize/refresh artifacts (keeps it stable)
-          animation: { duration: 450 }
+          animation: { duration: 420 }
         }
       });
+
+      // Click handler for tooltip
+      canvasEl.addEventListener("click", (evt) => {
+        const points = c.getElementsAtEventForMode(evt, "nearest", { intersect: true }, true);
+        if (!points.length) { hideTooltip(wrapEl); return; }
+
+        const idx = points[0].index;
+        const label = labels[idx] || "";
+        const rows = [
+          { k: "Revenue (ZAR)",  v: fmtZAR(revenue[idx] || 0) },
+          { k: "Pipeline (ZAR)", v: fmtZAR(pipeline[idx] || 0) },
+          { k: "Clients",        v: fmtInt(clients[idx] || 0) }
+        ];
+
+        const rect = wrapEl.getBoundingClientRect();
+        const x = evt.clientX - rect.left;
+        const y = evt.clientY - rect.top;
+        showTooltip(wrapEl, label, rows, x, y);
+      });
+
+      // Click outside chart area hides tooltip (within wrap)
+      wrapEl.addEventListener("click", (e) => {
+        if (e.target === wrapEl) hideTooltip(wrapEl);
+      });
+
+      return c;
     }
 
-    // ===== RENDERERS =====
+    // ===== RENDER TABLES =====
     function renderPipeline(rows) {
       const tbody = $("#pipelineTable tbody");
       if (!rows.length) {
-        tbody.innerHTML = `<tr><td class="muted" colspan="6">No deals found.</td></tr>`;
+        tbody.innerHTML = `<tr><td style="color:rgba(255,255,255,.62)" colspan="6">No deals found.</td></tr>`;
         $("#pipelineCountBadge").textContent = "0 deal(s)";
         $("#pipelineCountPill").textContent = "0";
         return;
       }
-
       $("#pipelineCountBadge").textContent = `${rows.length} deal(s)`;
       $("#pipelineCountPill").textContent = String(rows.length);
-
-      // No scrolling: show up to 6 rows
       const shown = rows.slice(0, 6);
-
       tbody.innerHTML = shown.map(r => {
         const client = r["Client"] || r["client"] || "";
         const deal = fmtZAR(safeNum(r["Deal Value"] || r["DealValue"] || r["Deal"]));
@@ -1134,18 +948,14 @@
     function renderActivity(rows) {
       const tbody = $("#activityTable tbody");
       if (!rows.length) {
-        tbody.innerHTML = `<tr><td class="muted" colspan="6">No activity found.</td></tr>`;
+        tbody.innerHTML = `<tr><td style="color:rgba(255,255,255,.62)" colspan="6">No activity found.</td></tr>`;
         $("#activityCountBadge").textContent = "0 log(s)";
         $("#activityCountPill").textContent = "0";
         return;
       }
-
       $("#activityCountBadge").textContent = `${rows.length} log(s)`;
       $("#activityCountPill").textContent = String(rows.length);
-
-      // No scrolling: show up to 6 rows
       const shown = rows.slice(0, 6);
-
       tbody.innerHTML = shown.map(r => {
         const date = r["Date"] || r["date"] || "";
         const client = r["Client"] || "";
@@ -1169,44 +979,14 @@
     function renderRevenueLedger(rows) {
       const tbody = $("#revenueTable tbody");
       $("#revenueCountBadge").textContent = `${rows.length} row(s)`;
-
       if (!rows.length) {
-        tbody.innerHTML = `<tr><td class="muted" colspan="6">No revenue rows found.</td></tr>`;
+        tbody.innerHTML = `<tr><td style="color:rgba(255,255,255,.62)" colspan="6">No revenue rows found.</td></tr>`;
         return;
       }
-
-      const shown = rows.slice(0, 6);
-
-      tbody.innerHTML = shown.map(r => {
-        const date = r["Date"] || "";
-        const client = r["Client"] || "";
-        const amount = fmtZAR(safeNum(r["Amount"] || r["Value"]));
-        const status = r["Status"] || "";
-        const inv = r["Invoice #"] || r["Invoice"] || r["Invoice#"] || "";
-        const paid = r["Paid Date"] || r["PaidDate"] || "";
-        return `
-          <tr>
-            <td>${date}</td>
-            <td title="${client}">${client}</td>
-            <td>${amount}</td>
-            <td>${status}</td>
-            <td title="${inv}">${inv}</td>
-            <td title="${paid}">${paid}</td>
-          </tr>
-        `;
-      }).join("");
     }
 
     // ===== LOAD + UPDATE =====
-    let lastGood = null;
     let refreshTimer = null;
-
-    function clearChartHover(chart) {
-      if (!chart) return;
-      chart.setActiveElements([]);
-      chart.tooltip?.setActiveElements?.([], { x: 0, y: 0 });
-      chart.update("none");
-    }
 
     async function loadAll() {
       try {
@@ -1219,7 +999,7 @@
           fetchCSV(FEEDS.activity),
         ]);
 
-        // METRICS -> KPI
+        // KPIs
         const metricMap = {};
         for (const r of metricsRows) {
           const key = (r["Metric"] || r["metric"] || "").trim();
@@ -1238,65 +1018,59 @@
         $("#clientsUpdated").textContent = metricMap["Active Clients"]?.["Last Updated"] || "--";
         $("#pipeUpdated").textContent = metricMap["Pipeline Value"]?.["Last Updated"] || "--";
 
-        // SIGNAL -> chart data
-        const labels = signalRows.map(r => (r["Date"] || r["date"] || "").trim());
+        // Signal
+        const labels   = signalRows.map(r => (r["Date"] || r["date"] || "").trim());
         const sRevenue = signalRows.map(r => safeNum(r["Revenue (ZAR)"] || r["Revenue"]));
-        const sPipeline = signalRows.map(r => safeNum(r["Pipeline (ZAR)"] || r["Pipeline"]));
+        const sPipe    = signalRows.map(r => safeNum(r["Pipeline (ZAR)"] || r["Pipeline"]));
         const sClients = signalRows.map(r => safeNum(r["Clients"] || r["clients"]));
 
         const range = labels.length ? `${shortDate(labels[0])} → ${shortDate(labels[labels.length - 1])}` : "--";
         $("#signalRange").textContent = range;
         $("#signalRange2").textContent = range;
 
-        // Latest point card
+        // Latest point
         if (labels.length) {
           const i = labels.length - 1;
           $("#latestPoint").innerHTML = `
             <div style="display:grid; gap:10px">
-              <div class="muted" style="letter-spacing:.12em; text-transform:uppercase; font-size:11px">Latest</div>
+              <div style="color:rgba(255,255,255,.62); letter-spacing:.12em; text-transform:uppercase; font-size:11px">Latest</div>
               <div style="display:grid; gap:6px">
-                <div><span class="muted">Date:</span> <strong>${labels[i]}</strong></div>
-                <div><span class="muted">Revenue:</span> <strong style="color:rgba(20,184,166,.95)">${fmtZAR(sRevenue[i])}</strong></div>
-                <div><span class="muted">Pipeline:</span> <strong style="color:rgba(20,184,166,.95)">${fmtZAR(sPipeline[i])}</strong></div>
-                <div><span class="muted">Clients:</span> <strong>${fmtInt(sClients[i])}</strong></div>
+                <div><span style="color:rgba(255,255,255,.62)">Date:</span> <strong>${labels[i]}</strong></div>
+                <div><span style="color:rgba(255,255,255,.62)">Revenue:</span> <strong style="color:rgba(20,184,166,.95)">${fmtZAR(sRevenue[i])}</strong></div>
+                <div><span style="color:rgba(255,255,255,.62)">Pipeline:</span> <strong style="color:rgba(20,184,166,.95)">${fmtZAR(sPipe[i])}</strong></div>
+                <div><span style="color:rgba(255,255,255,.62)">Clients:</span> <strong>${fmtInt(sClients[i])}</strong></div>
               </div>
             </div>
           `;
         } else {
-          $("#latestPoint").innerHTML = `<div class="muted">No signal data found.</div>`;
+          $("#latestPoint").innerHTML = `<div style="color:rgba(255,255,255,.62)">No signal data found.</div>`;
         }
 
-        // Clear hover state before destroy (prevents any refresh artifacts)
-        clearChartHover(chart1);
-        clearChartHover(chart2);
-
-        // Render charts (two canvases)
+        // Destroy & rebuild charts cleanly
         if (chart1) chart1.destroy();
         if (chart2) chart2.destroy();
-        chart1 = buildSignalChart($("#signalChart"), labels, sRevenue, sPipeline, sClients);
-        chart2 = buildSignalChart($("#signalChart2"), labels, sRevenue, sPipeline, sClients);
 
-        // Pipeline + Activity
+        hideTooltip($("#chartWrap1"));
+        hideTooltip($("#chartWrap2"));
+
+        chart1 = buildSignalChart($("#signalChart"),  $("#chartWrap1"), labels, sRevenue, sPipe, sClients);
+        chart2 = buildSignalChart($("#signalChart2"), $("#chartWrap2"), labels, sRevenue, sPipe, sClients);
+
         renderPipeline(pipelineRows);
         renderActivity(activityRows);
-
-        // Revenue ledger placeholder (kept intentionally empty to avoid fake data)
         renderRevenueLedger([]);
 
-        // System info
         $("#systemInfo").innerHTML = `
-          <div><span class="muted">Feeds:</span> Metrics, Signal, Pipeline, Activity</div>
-          <div><span class="muted">Refresh:</span> Every ${BRAND.REFRESH_SECONDS}s</div>
-          <div><span class="muted">Last sync:</span> ${timeHHMMSS()}</div>
+          <div><span style="color:rgba(255,255,255,.62)">Feeds:</span> Metrics, Signal, Pipeline, Activity</div>
+          <div><span style="color:rgba(255,255,255,.62)">Refresh:</span> Every ${BRAND.REFRESH_SECONDS}s</div>
+          <div><span style="color:rgba(255,255,255,.62)">Last sync:</span> ${timeHHMMSS()}</div>
         `;
 
-        lastGood = timeHHMMSS();
-        setLastGoodSync(lastGood);
+        setLastGoodSync(timeHHMMSS());
         setStatus(true, "Connected");
       } catch (err) {
         console.error(err);
         setStatus(false, "Error");
-        // keep lastGoodSync as-is, don’t wipe it
       }
     }
 
@@ -1316,8 +1090,7 @@
     // ===== INIT =====
     $("#companyTitle").textContent = BRAND.COMPANY_NAME;
     $("#refreshEvery").textContent = BRAND.REFRESH_SECONDS + "s";
-
-    $("#btnRefresh").addEventListener("click", () => loadAll());
+    $("#btnRefresh").addEventListener("click", loadAll);
 
     loadAll();
     startRefreshLoop();
