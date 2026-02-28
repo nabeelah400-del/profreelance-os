@@ -979,24 +979,23 @@
             legend: {
               labels: { color: tickColor, boxWidth: 18, boxHeight: 8, usePointStyle: false }
             },
-            tooltip: {
-              mode: "nearest",
-              intersect: true,
-              backgroundColor: "rgba(10,12,18,.92)",
-              borderColor: "rgba(255,255,255,.12)",
-              borderWidth: 1,
-              titleColor: "rgba(255,255,255,.92)",
-              bodyColor: "rgba(255,255,255,.86)",
-              callbacks: {
-                label: (ctx) => {
-                  const label = ctx.dataset.label || "";
-                  const v = ctx.parsed.y;
-                  if (label.includes("(ZAR)")) return `${label}: ${fmtZAR(v)}`;
-                  return `${label}: ${fmtInt(v)}`;
-                }
-              }
-            }
-          },
+tooltip: {
+  caretSize: 0,
+  caretPadding: 0,
+  backgroundColor: "rgba(10,12,18,.92)",
+  borderColor: "rgba(255,255,255,.12)",
+  borderWidth: 1,
+  titleColor: "rgba(255,255,255,.92)",
+  bodyColor: "rgba(255,255,255,.86)",
+  callbacks: {
+    label: (ctx) => {
+      const label = ctx.dataset.label || "";
+      const v = ctx.parsed.y;
+      if (label.includes("(ZAR)")) return `${label}: ${fmtZAR(v)}`;
+      return `${label}: ${fmtInt(v)}`;
+    }
+  }
+}
           scales: {
             x: {
               grid: { color: gridColor },
