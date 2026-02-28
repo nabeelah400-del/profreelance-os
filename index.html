@@ -66,6 +66,10 @@
       mix-blend-mode: overlay;
     }
 
+    /* ✅ FIX: put bg + grain BEHIND the app to stop hover repaint banding */
+    .bg, .grain { z-index: 0; }
+    .app { position: relative; z-index: 1; }
+
     .app {
       height: 100vh;
       display: grid;
@@ -974,7 +978,7 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          interaction: { mode: "nearest", intersect: true },
+          interaction: { mode: "index", intersect: false },
           plugins: {
             legend: {
               labels: { color: tickColor, boxWidth: 18, boxHeight: 8, usePointStyle: false }
@@ -1243,4 +1247,3 @@
   </script>
 </body>
 </html>
-
